@@ -1,11 +1,13 @@
 package com.springAI.Admin;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.springAI.SupprtTicket.SupportTicket;
+import jakarta.persistence.*;
+import lombok.Data;
+
+import java.util.List;
 
 @Entity
+@Data
 public class Admin {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -19,5 +21,9 @@ public class Admin {
     private String state;
     private String zip;
     private String country;
+
+    @OneToMany(mappedBy = "assignedTo", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SupportTicket> tickets;
+
 
 }

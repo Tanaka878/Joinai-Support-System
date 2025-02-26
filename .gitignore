@@ -1,10 +1,14 @@
+# Application properties
+application.properties
 HELP.md
+
+# Maven and Target Directory
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### STS ###
+### STS (Spring Tool Suite) ###
 .apt_generated
 .classpath
 .factorypath

@@ -1,8 +1,10 @@
 package com.springAI.Admin;
 
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-@RestController
-public interface AdminRepository {
+
+@Repository
+public interface AdminRepository extends JpaRepository<Admin, Integer> {
 
 }

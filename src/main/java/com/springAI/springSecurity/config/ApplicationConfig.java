@@ -1,7 +1,7 @@
 package com.springAI.springSecurity.config;
 
+import com.springAI.User.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.example.communityforumapp.user.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

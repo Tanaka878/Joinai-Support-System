@@ -66,10 +66,10 @@ public class JWTService {
     }
 
     private boolean isTokenExpired(String token) {
-        return etractExpiration(token).before(new Date());
+        return extractExpiration(token).before(new Date());
     }
 
-    private Date etractExpiration(String token) {
+    private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 }

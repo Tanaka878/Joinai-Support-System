@@ -1,6 +1,5 @@
 package com.springAI.User;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,15 +32,16 @@ public class User implements UserDetails {
     private Role role;
     private Gender gender;
     private LocalDate localDate = LocalDate.now();
+
     @ElementCollection
     private List<Long> groupIds = new ArrayList<>();
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
+    @Override
     public String getUsername() {
         return email;
     }
@@ -53,16 +53,16 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return true;
     }
 }

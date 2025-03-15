@@ -22,7 +22,7 @@ public class UserDTO {
     private Gender gender;
 
 
-    @Override
+  /*  @Override
     public String toString() {
         return "UserDTO{" +
                 "id=" + id +
@@ -39,5 +39,5 @@ public class UserDTO {
                 ", role=" + role +
                 ", gender=" + gender +
                 '}';
-    }
+    }*/
 }

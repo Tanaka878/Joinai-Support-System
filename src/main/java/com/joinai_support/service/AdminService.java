@@ -26,6 +26,7 @@ public class AdminService {
 
     @Transactional
     public ResponseEntity<String> createAdmin(UserDTO admin) {
+        System.out.println("creating admin");
         System.out.println("AdminService::createAdmin");
         Admin admin1 = new Admin();
         admin1.setEmail(admin.getEmail());

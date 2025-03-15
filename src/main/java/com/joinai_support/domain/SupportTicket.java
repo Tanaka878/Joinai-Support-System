@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class SupportTicket {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private Long id;
     private LocalDateTime launchTimestamp;
     private LocalDateTime servedTimestamp;
     private String subject;
@@ -29,7 +29,7 @@ public class SupportTicket {
     @JoinColumn(name = "admin_id", nullable = true) // Specifies the foreign key column
     private Admin assignedTo;
 
-    public SupportTicket(Integer id, LocalDateTime launchTimestamp,
+    public SupportTicket(Long id, LocalDateTime launchTimestamp,
                          LocalDateTime servedTimestamp, String subject,
                          Priority priority, String content, LocalDateTime updatedAt,
                          Status status, Duration timeLimit, Category category, Admin assignedTo) {

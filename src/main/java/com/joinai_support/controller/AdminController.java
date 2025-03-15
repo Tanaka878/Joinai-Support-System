@@ -33,7 +33,7 @@ public class AdminController {
 
     @GetMapping("/getAll")
     public ResponseEntity<List<Admin>> getAllAdmins() {
-        return null;
+        return adminService.getAll();
     }
 
     @PostMapping("/authenticate/")
@@ -41,5 +41,6 @@ public class AdminController {
         AuthenticationResponse response = authenticationService.authenticate(authenticationRequest);
         return ResponseEntity.ok(response); // Return a 200 OK response with the token
     }
+
 
 }

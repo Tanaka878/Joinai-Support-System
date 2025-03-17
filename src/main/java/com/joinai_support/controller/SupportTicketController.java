@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/ticket") // Correctly defining the base path for this controller
+@CrossOrigin("*")
 public class SupportTicketController {
 
     private final SupportTicketService supportTicketService;
@@ -34,5 +36,4 @@ public class SupportTicketController {
     public ResponseEntity<List<SupportTicket>> getMyTickets(@RequestBody AuthenticationResponse authenticationResponse) {
         return supportTicketService.getMyTickets(authenticationResponse);
     }
-
 }

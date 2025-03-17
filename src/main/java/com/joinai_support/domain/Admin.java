@@ -1,5 +1,7 @@
 package com.joinai_support.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -11,6 +13,7 @@ public class Admin extends User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
     private String phone;
     private String address;
     private String city;
@@ -19,8 +22,6 @@ public class Admin extends User {
     private String country;
 
     @OneToMany(mappedBy = "assignedTo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<SupportTicket> tickets;
-
-
-
 }

@@ -4,6 +4,7 @@ import com.joinai_support.domain.Admin;
 import com.joinai_support.domain.SupportTicket;
 import com.joinai_support.dto.AdminLoginRequest;
 import com.joinai_support.dto.AuthenticationResponse;
+import com.joinai_support.dto.GetResponse;
 import com.joinai_support.dto.UserDTO;
 import com.joinai_support.repository.SupportTicketRepository;
 import com.joinai_support.service.AdminService;
@@ -43,11 +44,11 @@ public class AdminController {
         return ResponseEntity.ok(response); // Return a 200 OK response with the token
     }
 
-    @GetMapping("/getAgents")
-    public ResponseEntity<List<Admin>> getAgents() {
-        return adminService.getAllAgents();
-
+    @PostMapping("/getAgents")
+    public ResponseEntity<List<Admin>> getAgents(@RequestBody GetResponse request) {
+        return adminService.getAllAgents(request);
     }
+
 
     @GetMapping("/getAll")
     public ResponseEntity<List<SupportTicket>> getAllUsers() {

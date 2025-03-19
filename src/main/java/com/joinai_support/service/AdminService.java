@@ -66,6 +66,7 @@ public class AdminService {
         }
     }
 
+    @Transactional
     public ResponseEntity<Admin> editProfile(GetResponse request) {
         Optional<User> user = userRepository.findByEmail(jwtService.extractUserName(request.getToken()));
 
@@ -84,4 +85,17 @@ public class AdminService {
 
 
         }
+
+    @Transactional
+    public ResponseEntity<Admin> deleteProfile(GetResponse request) {
+
+        Optional<User> user = userRepository.findByEmail(jwtService.extractUserName(request.getToken()));
+
+        if (user.isPresent() && jwtService.validateToken(request.getToken(), user.get())) {
+            Admin admin = adminRepository.findByEmail(request.getAdmin().getEmail());
+            adminRepository.delete(admin);
+        return ResponseEntity.ok(admin);
+        }
+         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
 }

@@ -61,5 +61,11 @@ public class AdminController {
         return adminService.editProfile(request);
     }
 
+    @PostMapping("/deleteProfile")
+    public ResponseEntity<Admin> deleteProfile(@RequestBody GetResponse request) {
+        return adminService.deleteProfile(request);
+
+    }
+
 
 }

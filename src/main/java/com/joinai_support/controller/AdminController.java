@@ -56,5 +56,10 @@ public class AdminController {
        return ResponseEntity.ok(users);
     }
 
+    @PostMapping("/editProfile")
+    public ResponseEntity<Admin> editProfile(@RequestBody GetResponse request) {
+        return adminService.editProfile(request);
+    }
+
 
 }

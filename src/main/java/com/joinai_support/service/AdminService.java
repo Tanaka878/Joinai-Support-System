@@ -66,4 +66,22 @@ public class AdminService {
         }
     }
 
+    public ResponseEntity<Admin> editProfile(GetResponse request) {
+        Optional<User> user = userRepository.findByEmail(jwtService.extractUserName(request.getToken()));
+
+        if (user.isPresent() && jwtService.validateToken(request.getToken(), user.get())) {
+            Admin admin = adminRepository.findByEmail(request.getAdmin().getEmail());
+            admin.setFirstName(request.getAdmin().getFirstName());
+            admin.setRole(request.getAdmin().getRole());
+            admin.setPassword(request.getAdmin().getPassword());
+            adminRepository.save(admin);
+            return ResponseEntity.ok(admin);
+
+        }else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+
+
+        }
 }

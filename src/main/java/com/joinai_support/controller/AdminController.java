@@ -8,6 +8,7 @@ import com.joinai_support.dto.UserDTO;
 import com.joinai_support.repository.SupportTicketRepository;
 import com.joinai_support.service.AdminService;
 import com.joinai_support.service.AuthenticationService;
+import org.aspectj.weaver.loadtime.Agent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +41,12 @@ public class AdminController {
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AdminLoginRequest authenticationRequest) {
         AuthenticationResponse response = authenticationService.authenticate(authenticationRequest);
         return ResponseEntity.ok(response); // Return a 200 OK response with the token
+    }
+
+    @GetMapping("/getAgents")
+    public ResponseEntity<List<Admin>> getAgents() {
+        return adminService.getAllAgents();
+
     }
 
     @GetMapping("/getAll")

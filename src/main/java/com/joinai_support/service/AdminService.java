@@ -34,6 +34,17 @@ public class AdminService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
+    public ResponseEntity<String> createAgent(UserDTO admin) {
+        Admin agent = new Admin();
+        agent.setEmail(admin.getEmail());
+        agent.setPassword(passwordEncoder.encode(admin.getPassword()));
+        agent.setFirstName(admin.getFirstName());
+        agent.setRole(Role.ADMIN);
+        adminRepository.save(agent);
+        return ResponseEntity.ok("Agent created");
+    }
+
 
     @Transactional
     public ResponseEntity<String> createAdmin(UserDTO admin) {
@@ -41,7 +52,7 @@ public class AdminService {
         admin1.setEmail(admin.getEmail());
         admin1.setPassword(passwordEncoder.encode(admin.getPassword()));
         admin1.setFirstName(admin.getFirstName());
-        admin1.setRole(admin.getRole());
+        admin1.setRole(Role.ADMIN);
         adminRepository.save(admin1);
          return ResponseEntity.ok("Admin created");
     }

@@ -9,7 +9,7 @@ import com.joinai_support.dto.UserDTO;
 import com.joinai_support.repository.SupportTicketRepository;
 import com.joinai_support.service.AdminService;
 import com.joinai_support.service.AuthenticationService;
-import org.aspectj.weaver.loadtime.Agent;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +37,11 @@ public class AdminController {
         return adminService.createAdmin(admin);
     }
 
+    @PostMapping("/createAgent")
+    public ResponseEntity<String> createAgent(@RequestBody UserDTO admin) {
+        return adminService.createAgent(admin);
+    }
+
 
     @PostMapping("/authenticate/")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AdminLoginRequest authenticationRequest) {
@@ -48,6 +53,7 @@ public class AdminController {
     public ResponseEntity<List<Admin>> getAgents(@RequestBody GetResponse request) {
         return adminService.getAllAgents(request);
     }
+
 
 
     @GetMapping("/getAll")

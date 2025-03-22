@@ -40,7 +40,7 @@ public class AdminService {
         agent.setEmail(admin.getEmail());
         agent.setPassword(passwordEncoder.encode(admin.getPassword()));
         agent.setFirstName(admin.getFirstName());
-        agent.setRole(Role.ADMIN);
+        agent.setRole(Role.AGENT);
         adminRepository.save(agent);
         return ResponseEntity.ok("Agent created");
     }
@@ -58,7 +58,7 @@ public class AdminService {
     }
 
     public ResponseEntity<List<Admin>> getAll() {
-        List<Admin> adminList = adminRepository.findAll();
+        List<Admin> adminList = adminRepository.findAllByRole(Role.AGENT);
         return ResponseEntity.ok(adminList);
     }
 

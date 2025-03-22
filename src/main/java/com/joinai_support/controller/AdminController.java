@@ -45,6 +45,7 @@ public class AdminController {
 
     @PostMapping("/authenticate/")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AdminLoginRequest authenticationRequest) {
+        System.out.println("Authentication");
         AuthenticationResponse response = authenticationService.authenticate(authenticationRequest);
         return ResponseEntity.ok(response); // Return a 200 OK response with the token
     }

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/ticket") // Correctly defining the base path for this controller
+@RequestMapping("/ticket")
 @CrossOrigin("*")
 public class SupportTicketController {
 
@@ -41,12 +41,13 @@ public class SupportTicketController {
 
     @RequestMapping("/updateTicket")
     public ResponseEntity<String> updateTicket(@RequestBody TicketStatusDTO supportTicket) {
-        Admin admin = adminRepository.findByEmail(jwtService.extractUserName(supportTicket.getToken()));
+        /*Admin admin = adminRepository.findByEmail(jwtService.extractUserName(supportTicket.getToken()));
         boolean isValid = jwtService.validateToken(supportTicket.getToken(), admin);
-
-        if (!isValid) {
+*/
+        /*if (!isValid) {
             return ResponseEntity.badRequest().build();
-        }
+        }*/
+        System.out.println(" The user Id"+ supportTicket.getTicketId());
         return supportTicketService.updateTicket(supportTicket);
     }
 

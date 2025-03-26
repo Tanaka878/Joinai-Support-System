@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -21,14 +22,14 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Disable CSRF protection
+                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF protection
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/ticket/**", // Allow all ticket-related endpoints
-                                "/admin/**",
-                                "admin/getAll",
-                                "/api/v1/demo-controller/fetch",
-                                "/api/communities/**"
+                                "/ticket/**",           // Matches all endpoints under /ticket/
+                                "/admin/**",            // Matches all endpoints under /admin/
+                                "/admin/getAll",        // Specifically match /admin/getAll
+                                "/ticket/updateTicket"
+
                         ).permitAll() // Permit these endpoints without authentication
                         .anyRequest().authenticated() // Require authentication for all other endpoints
                 )

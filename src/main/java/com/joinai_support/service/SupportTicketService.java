@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -45,6 +46,8 @@ public class SupportTicketService {
                 .orElseThrow(() -> new IllegalStateException("Failed to find an admin."));
 
         supportTicket.setAssignedTo(selectedAdmin);
+        supportTicket.setLaunchTimestamp(LocalDateTime.now());
+
         supportTicketRepository.save(supportTicket);
 
         return "Ticket successfully assigned to admin: " + selectedAdmin.getId();
@@ -56,7 +59,7 @@ public class SupportTicketService {
         Optional<SupportTicket> supportTicketEntity = supportTicketRepository.findById(supportTicket.getTicketId());
         if (supportTicketEntity.isPresent()) {
             supportTicketEntity.get().setStatus(supportTicket.getStatus());
-            Duration between = Duration.between(supportTicketEntity.get().getLaunchTimestamp(), supportTicketEntity.get().getServedTimestamp());
+            Duration between = Duration.between(supportTicketEntity.get().getLaunchTimestamp(), LocalDateTime.now());
             supportTicketEntity.get().setTimeLimit(between);
             supportTicketRepository.save(supportTicketEntity.get());
             return ResponseEntity.ok("Ticket successfully updated.");

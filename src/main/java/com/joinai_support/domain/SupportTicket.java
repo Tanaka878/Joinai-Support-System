@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 public class SupportTicket {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -24,7 +25,6 @@ public class SupportTicket {
     private LocalDateTime launchTimestamp;
     private LocalDateTime servedTimestamp;
     private String subject;
-
 
     private String content;
     private String attachments;
@@ -46,4 +46,22 @@ public class SupportTicket {
     @JoinColumn(name = "admin_id", nullable = true)
     @JsonBackReference
     private Admin assignedTo;
+
+    @PrePersist
+    public void prePersist() {
+        // Set launchTimestamp to the current time before persisting
+        if (launchTimestamp == null) {
+            launchTimestamp = LocalDateTime.now();
+        }
+
+        // Set updatedAt to the current time before persisting
+        if (updatedAt == null) {
+            updatedAt = LocalDateTime.now();
+        }
+
+        // Set default status if not set (optional, can be customized)
+        if (status == null) {
+            status = Status.NEW;  // Assuming "NEW" is the default status
+        }
+    }
 }

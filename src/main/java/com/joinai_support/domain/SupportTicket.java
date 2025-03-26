@@ -31,6 +31,7 @@ public class SupportTicket {
     private LocalDateTime updatedAt;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     @JsonSerialize(using = DurationSerializer.class)
@@ -38,6 +39,7 @@ public class SupportTicket {
     private Duration timeLimit;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @Enumerated(EnumType.STRING)
     private Category category;
 
     @ManyToOne

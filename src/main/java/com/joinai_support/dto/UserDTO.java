@@ -20,24 +20,4 @@ public class UserDTO {
     private String email;
     private Role role;
     private Gender gender;
-
-
-  /*  @Override
-    public String toString() {
-        return "UserDTO{" +
-                "id=" + id +
-                ", phone='" + phone + '\'' +
-                ", address='" + address + '\'' +
-                ", city='" + city + '\'' +
-                ", state='" + state + '\'' +
-                ", zip='" + zip + '\'' +
-                ", country='" + country + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", email='" + email + '\'' +
-                ", role=" + role +
-                ", gender=" + gender +
-                '}';
-    }*/
 }

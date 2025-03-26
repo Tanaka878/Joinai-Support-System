@@ -2,7 +2,6 @@ package com.joinai_support.controller;
 
 import com.joinai_support.domain.Admin;
 import com.joinai_support.domain.SupportTicket;
-import com.joinai_support.domain.User;
 import com.joinai_support.dto.AdminLoginRequest;
 import com.joinai_support.dto.AuthenticationResponse;
 import com.joinai_support.dto.GetResponse;
@@ -28,7 +27,6 @@ public class AdminController {
     private final AdminService adminService;
     private final AuthenticationService authenticationService;
     private final SupportTicketRepository supportTicketRepository;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JWTService jwtService;
 
     @Autowired
@@ -36,7 +34,6 @@ public class AdminController {
         this.adminService = adminService;
         this.authenticationService = authenticationService;
         this.supportTicketRepository = supportTicketRepository;
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.jwtService = jwtService;
     }
 
@@ -49,7 +46,6 @@ public class AdminController {
     public ResponseEntity<String> createAgent(@RequestBody UserDTO admin) {
         return adminService.createAgent(admin);
     }
-
 
     @PostMapping("/authenticate/")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AdminLoginRequest authenticationRequest) {
@@ -65,8 +61,6 @@ public class AdminController {
     public ResponseEntity<List<Admin>> getAgents(@RequestBody GetResponse request) {
         return adminService.getAllAgents(request);
     }
-
-
 
     @GetMapping("/getAll")
     public ResponseEntity<List<SupportTicket>> getAllUsers() {
@@ -84,6 +78,4 @@ public class AdminController {
         return adminService.deleteProfile(request);
 
     }
-
-
 }

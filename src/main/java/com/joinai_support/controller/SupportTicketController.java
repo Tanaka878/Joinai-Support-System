@@ -39,7 +39,7 @@ public class SupportTicketController {
         return supportTicketService.launchTicket(supportTicket);
     }
 
-    @PutMapping("/updateTicket")
+    @RequestMapping("/updateTicket")
     public ResponseEntity<String> updateTicket(@RequestBody TicketStatusDTO supportTicket) {
         Admin admin = adminRepository.findByEmail(jwtService.extractUserName(supportTicket.getToken()));
         boolean isValid = jwtService.validateToken(supportTicket.getToken(), admin);

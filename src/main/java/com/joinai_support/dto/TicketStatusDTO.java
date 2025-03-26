@@ -7,4 +7,5 @@ import lombok.Data;
 public class TicketStatusDTO {
     private Long ticketId;
     private Status status;
+    private String token;
 }

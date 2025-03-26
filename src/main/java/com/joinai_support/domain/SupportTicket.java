@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.DurationDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.DurationSerializer;
-import com.joinai_support.domain.Admin;
 import com.joinai_support.utils.Category;
 import com.joinai_support.utils.Status;
 import jakarta.persistence.*;

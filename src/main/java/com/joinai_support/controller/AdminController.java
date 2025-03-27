@@ -74,7 +74,7 @@ public class AdminController {
     }
 
     @PostMapping("/deleteProfile")
-    public ResponseEntity<Admin> deleteProfile(@RequestBody GetResponse request) {
+    public ResponseEntity<Admin> deleteAgentProfile(@RequestBody GetResponse request) {
         return adminService.deleteProfile(request);
 
     }

@@ -6,6 +6,7 @@ import com.joinai_support.dto.AuthenticationResponse;
 import com.joinai_support.dto.StatisticsDTO;
 import com.joinai_support.dto.TicketStatusDTO;
 import com.joinai_support.repository.SupportTicketRepository;
+import com.joinai_support.utils.Authenticate;
 import com.joinai_support.utils.UserValidator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,6 @@ public class SupportTicketService {
     }
 
     public String launchTicket(SupportTicket supportTicket) {
-        // Step 1: Fetch all admins
         ResponseEntity<List<Admin>> agentsResponse = adminService.getAll();
         List<Admin> agentList = agentsResponse.getBody();
 
@@ -44,10 +44,8 @@ public class SupportTicketService {
         Admin selectedAdmin = agentList.stream()
                 .min(Comparator.comparingInt(admin -> admin.getTickets().size()))
                 .orElseThrow(() -> new IllegalStateException("Failed to find an admin."));
-
         supportTicket.setAssignedTo(selectedAdmin);
         supportTicket.setLaunchTimestamp(LocalDateTime.now());
-
         supportTicketRepository.save(supportTicket);
 
         return "Ticket successfully assigned to admin: " + selectedAdmin.getId();
@@ -69,11 +67,10 @@ public class SupportTicketService {
         }
     }
 
-    public ResponseEntity<List<SupportTicket>> getMyTickets(AuthenticationResponse authenticationResponse) {
+    public ResponseEntity<List<SupportTicket>> getMyTickets(Authenticate authenticationResponse) {
        List<SupportTicket> tickets = userValidator.getUser(authenticationResponse.getToken()).getTickets();
        return ResponseEntity.ok(tickets);
     }
-
 
     public ResponseEntity<StatisticsDTO> getStatistics() {
         double avgTimeLimit = supportTicketRepository.findAll()

@@ -1,13 +1,11 @@
 package com.joinai_support.controller;
 
-import com.joinai_support.domain.Admin;
 import com.joinai_support.domain.SupportTicket;
 import com.joinai_support.dto.AuthenticationResponse;
 import com.joinai_support.dto.StatisticsDTO;
 import com.joinai_support.dto.TicketStatusDTO;
-import com.joinai_support.repository.AdminRepository;
 import com.joinai_support.service.SupportTicketService;
-import com.joinai_support.springSecurity.config.JWTService;
+import com.joinai_support.utils.Authenticate;
 import com.joinai_support.utils.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,16 +19,11 @@ import java.util.List;
 public class SupportTicketController {
 
     private final SupportTicketService supportTicketService;
-    private final JWTService jwtService;
-    private final AdminRepository adminRepository;
     private final UserValidator userValidator;
 
-
     @Autowired
-    public SupportTicketController(SupportTicketService supportTicketService, JWTService jwtService, AdminRepository adminRepository, UserValidator userValidator) {
+    public SupportTicketController(SupportTicketService supportTicketService, UserValidator userValidator) {
         this.supportTicketService = supportTicketService;
-        this.jwtService = jwtService;
-        this.adminRepository = adminRepository;
         this.userValidator = userValidator;
     }
 
@@ -41,18 +34,15 @@ public class SupportTicketController {
 
     @RequestMapping("/updateTicket")
     public ResponseEntity<String> updateTicket(@RequestBody TicketStatusDTO supportTicket) {
-        /*Admin admin = adminRepository.findByEmail(jwtService.extractUserName(supportTicket.getToken()));
-        boolean isValid = jwtService.validateToken(supportTicket.getToken(), admin);
-*/
-        /*if (!isValid) {
+        if (!userValidator.Validator(supportTicket.getToken())) {
             return ResponseEntity.badRequest().build();
-        }*/
+        }
         System.out.println(" The user Id"+ supportTicket.getTicketId());
         return supportTicketService.updateTicket(supportTicket);
     }
 
     @GetMapping("/getMyTickets")
-    public ResponseEntity<List<SupportTicket>> getMyTickets(@RequestBody AuthenticationResponse authenticationResponse) {
+    public ResponseEntity<List<SupportTicket>> getMyTickets(@RequestBody Authenticate authenticationResponse) {
         return supportTicketService.getMyTickets(authenticationResponse);
     }
 

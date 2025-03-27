@@ -1,8 +1,6 @@
 package com.joinai_support.utils;
 
-
 import com.joinai_support.domain.Admin;
-import com.joinai_support.domain.User;
 import com.joinai_support.service.AdminService;
 import com.joinai_support.springSecurity.config.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,3 +30,4 @@ public class UserValidator {
     }
 
 }
+

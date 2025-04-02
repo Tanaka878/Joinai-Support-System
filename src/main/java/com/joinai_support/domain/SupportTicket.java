@@ -49,19 +49,17 @@ public class SupportTicket {
 
     @PrePersist
     public void prePersist() {
-        // Set launchTimestamp to the current time before persisting
         if (launchTimestamp == null) {
             launchTimestamp = LocalDateTime.now();
         }
 
-        // Set updatedAt to the current time before persisting
         if (updatedAt == null) {
             updatedAt = LocalDateTime.now();
         }
 
-        // Set default status if not set (optional, can be customized)
+
         if (status == null) {
-            status = Status.NEW;  // Assuming "NEW" is the default status
+            status = Status.NEW;
         }
     }
 }

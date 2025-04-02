@@ -2,11 +2,11 @@ package com.joinai_support.service;
 
 import com.joinai_support.domain.Admin;
 import com.joinai_support.domain.SupportTicket;
-import com.joinai_support.dto.AuthenticationResponse;
-import com.joinai_support.dto.StatisticsDTO;
-import com.joinai_support.dto.TicketStatusDTO;
+import com.joinai_support.dto.*;
 import com.joinai_support.repository.SupportTicketRepository;
+import com.joinai_support.repository.UserRepository;
 import com.joinai_support.utils.Authenticate;
+import com.joinai_support.utils.Status;
 import com.joinai_support.utils.UserValidator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class SupportTicketService {
@@ -27,10 +28,11 @@ public class SupportTicketService {
 
 
     @Autowired
-    public SupportTicketService(SupportTicketRepository supportTicketRepository, AdminService adminService, UserValidator userValidator, UserValidator userValidator1) {
+    public SupportTicketService(SupportTicketRepository supportTicketRepository, AdminService adminService, UserValidator userValidator1) {
         this.supportTicketRepository = supportTicketRepository;
         this.adminService = adminService;
         this.userValidator = userValidator1;
+
     }
 
     public String launchTicket(SupportTicket supportTicket) {
@@ -60,6 +62,7 @@ public class SupportTicketService {
             Duration between = Duration.between(supportTicketEntity.get().getLaunchTimestamp(), LocalDateTime.now());
             supportTicketEntity.get().setTimeLimit(between);
             supportTicketRepository.save(supportTicketEntity.get());
+
             return ResponseEntity.ok("Ticket successfully updated.");
         }
         else {
@@ -83,5 +86,48 @@ public class SupportTicketService {
         return ResponseEntity.ok(statisticsDTO);
     }
 
+    //method for calculating statics for agents for use by agents
+    public ResponseEntity<StatsByAgent> getStatsByAgent(GetResponse authenticationResponse) {
+        List<SupportTicket> tickets = supportTicketRepository.findAllByAssignedTo(authenticationResponse.getAdmin());
+        StatsByAgent statsByAgent = new StatsByAgent();
+
+        LocalDateTime now = LocalDateTime.now();
+        Duration durationThreshold = Duration.ofHours(24);
+        LocalDateTime deadline = now.minus(durationThreshold);
+
+        statsByAgent.setDAILY_TICKETS(tickets.stream()
+                .filter(supportTicket ->
+                        supportTicket.getLaunchTimestamp().isBefore(deadline)).count());
+
+        statsByAgent.setSOLVED_DAILY(tickets.stream()
+                .filter(supportTicket ->
+                        supportTicket.getLaunchTimestamp().isBefore(deadline)&& (supportTicket.getStatus() == Status.CLOSED)).count());
+
+
+        Duration weeklyDurationThreshold = Duration.ofHours(168);
+        LocalDateTime weeklyDeadline = now.minus(weeklyDurationThreshold);
+
+        statsByAgent.setWEEKLY_TICKETS(tickets.stream()
+                .filter(supportTicket ->
+                        supportTicket.getLaunchTimestamp().isBefore(weeklyDeadline)).count());
+
+        statsByAgent.setSOLVED_WEEKLY(tickets.stream()
+                .filter(supportTicket ->
+                        supportTicket.getLaunchTimestamp().isBefore(weeklyDeadline) && (supportTicket.getStatus() ==Status.CLOSED)).count());
+
+        Duration monthlyDurationThreshold = Duration.ofHours(672);
+        LocalDateTime monthlyDeadline = now.minus(monthlyDurationThreshold);
+
+        statsByAgent.setMONTHLY_TICKETS(tickets.stream()
+                .filter(supportTicket ->
+                        supportTicket.getLaunchTimestamp().isBefore(monthlyDeadline)).count());
+
+        statsByAgent.setMONTHLY_TICKETS(tickets.stream()
+                .filter(supportTicket ->
+                        supportTicket.getLaunchTimestamp().isBefore(monthlyDeadline) && (supportTicket.getStatus() ==Status.CLOSED)).count());
+        return ResponseEntity.ok(statsByAgent);
+    }
+
+//stats for admins
 
 }

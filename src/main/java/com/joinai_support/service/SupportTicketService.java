@@ -87,8 +87,8 @@ public class SupportTicketService {
     }
 
     //method for calculating statics for agents for use by agents
-    public ResponseEntity<StatsByAgent> getStatsByAgent(GetResponse authenticationResponse) {
-        List<SupportTicket> tickets = supportTicketRepository.findAllByAssignedTo(authenticationResponse.getAdmin());
+    public ResponseEntity<StatsByAgent> getStatsByAgent(Admin admin) {
+        List<SupportTicket> tickets = supportTicketRepository.findAllByAssignedTo(admin);
         StatsByAgent statsByAgent = new StatsByAgent();
 
         LocalDateTime now = LocalDateTime.now();

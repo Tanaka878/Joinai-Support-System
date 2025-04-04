@@ -29,5 +29,15 @@ public class UserValidator {
         return adminService.getAdmin(email);
     }
 
+    public Admin validateAndGetAdmin(String token) {
+        boolean valid = Validator(token);
+        if (valid) {
+            return getUser(token);
+        }
+        else {
+            return null;
+        }
+    }
+
 }
 

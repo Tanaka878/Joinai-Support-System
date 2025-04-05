@@ -62,7 +62,6 @@ public class SupportTicketController {
     public ResponseEntity<StatsByAgent> getMyStats(@RequestBody Authenticate authenticationResponse) {
         Admin admin =userValidator.validateAndGetAdmin(authenticationResponse.getToken());
         return supportTicketService.getStatsByAgent(admin);
-
     }
 
 

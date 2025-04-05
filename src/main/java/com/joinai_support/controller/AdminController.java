@@ -63,7 +63,7 @@ public class AdminController {
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<SupportTicket>> getAllUsers() {
+    public ResponseEntity<List<SupportTicket>> getAllTickets() {
         List<SupportTicket> users = supportTicketRepository.findAll();
        return ResponseEntity.ok(users);
     }

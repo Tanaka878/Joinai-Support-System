@@ -4,7 +4,6 @@ import com.joinai_support.domain.Admin;
 import com.joinai_support.domain.SupportTicket;
 import com.joinai_support.dto.*;
 import com.joinai_support.repository.SupportTicketRepository;
-import com.joinai_support.repository.UserRepository;
 import com.joinai_support.utils.Authenticate;
 import com.joinai_support.utils.Status;
 import com.joinai_support.utils.UserValidator;
@@ -61,6 +60,7 @@ public class SupportTicketService {
             supportTicketEntity.get().setStatus(supportTicket.getStatus());
             Duration between = Duration.between(supportTicketEntity.get().getLaunchTimestamp(), LocalDateTime.now());
             supportTicketEntity.get().setTimeLimit(between);
+            supportTicketEntity.get().setServedTimestamp(LocalDateTime.now());
             supportTicketRepository.save(supportTicketEntity.get());
 
             return ResponseEntity.ok("Ticket successfully updated.");
@@ -92,42 +92,54 @@ public class SupportTicketService {
         StatsByAgent statsByAgent = new StatsByAgent();
 
         LocalDateTime now = LocalDateTime.now();
-        Duration durationThreshold = Duration.ofHours(24);
-        LocalDateTime deadline = now.minus(durationThreshold);
 
+        // Daily stats (last 24 hours)
+        LocalDateTime dailyStart = now.minusHours(24);
         statsByAgent.setDAILY_TICKETS(tickets.stream()
                 .filter(supportTicket ->
-                        supportTicket.getLaunchTimestamp().isBefore(deadline)).count());
+                        supportTicket.getLaunchTimestamp().isAfter(dailyStart) ||
+                                supportTicket.getLaunchTimestamp().isEqual(dailyStart))
+                .count());
 
         statsByAgent.setSOLVED_DAILY(tickets.stream()
                 .filter(supportTicket ->
-                        supportTicket.getLaunchTimestamp().isBefore(deadline)&& (supportTicket.getStatus() == Status.CLOSED)).count());
+                        (supportTicket.getLaunchTimestamp().isAfter(dailyStart) ||
+                                supportTicket.getLaunchTimestamp().isEqual(dailyStart)) &&
+                                (supportTicket.getStatus() == Status.CLOSED))
+                .count());
 
-
-        Duration weeklyDurationThreshold = Duration.ofHours(168);
-        LocalDateTime weeklyDeadline = now.minus(weeklyDurationThreshold);
-
+        // Weekly stats (last 7 days / 168 hours)
+        LocalDateTime weeklyStart = now.minusHours(168);
         statsByAgent.setWEEKLY_TICKETS(tickets.stream()
                 .filter(supportTicket ->
-                        supportTicket.getLaunchTimestamp().isBefore(weeklyDeadline)).count());
+                        supportTicket.getLaunchTimestamp().isAfter(weeklyStart) ||
+                                supportTicket.getLaunchTimestamp().isEqual(weeklyStart))
+                .count());
 
         statsByAgent.setSOLVED_WEEKLY(tickets.stream()
                 .filter(supportTicket ->
-                        supportTicket.getLaunchTimestamp().isBefore(weeklyDeadline) && (supportTicket.getStatus() ==Status.CLOSED)).count());
+                        (supportTicket.getLaunchTimestamp().isAfter(weeklyStart) ||
+                                supportTicket.getLaunchTimestamp().isEqual(weeklyStart)) &&
+                                (supportTicket.getStatus() == Status.CLOSED))
+                .count());
 
-        Duration monthlyDurationThreshold = Duration.ofHours(672);
-        LocalDateTime monthlyDeadline = now.minus(monthlyDurationThreshold);
-
+        // Monthly stats (last 28 days / 672 hours)
+        LocalDateTime monthlyStart = now.minusHours(672);
         statsByAgent.setMONTHLY_TICKETS(tickets.stream()
                 .filter(supportTicket ->
-                        supportTicket.getLaunchTimestamp().isBefore(monthlyDeadline)).count());
+                        supportTicket.getLaunchTimestamp().isAfter(monthlyStart) ||
+                                supportTicket.getLaunchTimestamp().isEqual(monthlyStart))
+                .count());
 
-        statsByAgent.setMONTHLY_TICKETS(tickets.stream()
+        statsByAgent.setSOLVED_MONTHLY(tickets.stream()
                 .filter(supportTicket ->
-                        supportTicket.getLaunchTimestamp().isBefore(monthlyDeadline) && (supportTicket.getStatus() ==Status.CLOSED)).count());
+                        (supportTicket.getLaunchTimestamp().isAfter(monthlyStart) ||
+                                supportTicket.getLaunchTimestamp().isEqual(monthlyStart)) &&
+                                (supportTicket.getStatus() == Status.CLOSED))
+                .count());
+
         return ResponseEntity.ok(statsByAgent);
     }
-
 //stats for admins
 
 }

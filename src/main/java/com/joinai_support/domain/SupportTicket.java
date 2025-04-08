@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.DurationDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.DurationSerializer;
 import com.joinai_support.utils.Category;
+import com.joinai_support.utils.Priority;
 import com.joinai_support.utils.Status;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -25,6 +26,7 @@ public class SupportTicket {
     private LocalDateTime launchTimestamp;
     private LocalDateTime servedTimestamp;
     private String subject;
+    private Priority priority;
 
     private String content;
     private String attachments;

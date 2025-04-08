@@ -54,6 +54,7 @@ public class AdminController {
         String token = response.getToken();
         Optional<Admin> user = Optional.ofNullable(adminService.getAdmin(jwtService.extractUserName(token)));
         user.ifPresent(admin -> response.setRole(admin.getRole()));
+        user.ifPresent(admin -> response.setId(user.get().getId()));
         return ResponseEntity.ok(response);
     }
 

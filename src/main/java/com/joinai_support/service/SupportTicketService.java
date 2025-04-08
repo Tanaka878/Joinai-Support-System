@@ -47,6 +47,7 @@ public class SupportTicketService {
                 .orElseThrow(() -> new IllegalStateException("Failed to find an admin."));
         supportTicket.setAssignedTo(selectedAdmin);
         supportTicket.setLaunchTimestamp(LocalDateTime.now());
+        System.out.println("selectedAdmin: " + selectedAdmin);
         supportTicketRepository.save(supportTicket);
 
         return "Ticket successfully assigned to admin: " + selectedAdmin.getId();

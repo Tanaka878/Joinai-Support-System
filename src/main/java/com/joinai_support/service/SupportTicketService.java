@@ -33,23 +33,41 @@ public class SupportTicketService {
     }
 
     public String launchTicket(SupportTicket supportTicket) {
+        // Fetch all available admins
         ResponseEntity<List<Admin>> agentsResponse = adminService.getAll();
         List<Admin> agentList = agentsResponse.getBody();
 
+        // Check if admins are available
         if (agentList == null || agentList.isEmpty()) {
             return "No admins available to assign the ticket.";
         }
 
+        // Find the admin with the least number of tickets
         Admin selectedAdmin = agentList.stream()
+                .filter(admin -> admin.getTickets() != null) // Ensure tickets are not null
                 .min(Comparator.comparingInt(admin -> admin.getTickets().size()))
-                .orElseThrow(() -> new IllegalStateException("Failed to find an admin."));
+                .orElse(null);
+
+        if (selectedAdmin == null) {
+            return "Failed to find a suitable admin for ticket assignment.";
+        }
+
+        // Assign the ticket to the selected admin
         supportTicket.setAssignedTo(selectedAdmin);
         supportTicket.setLaunchTimestamp(LocalDateTime.now());
-        System.out.println("selectedAdmin: " + selectedAdmin);
-        supportTicketRepository.save(supportTicket);
+        supportTicket.setStatus(Status.NEW); // Ensure the ticket starts with a default status
+
+        try {
+            supportTicketRepository.save(supportTicket);
+        } catch (Exception e) {
+            // Log the exception and return a failure message
+            e.printStackTrace();
+            return "Failed to save the support ticket. Please try again.";
+        }
 
         return "Ticket successfully assigned to admin: " + selectedAdmin.getId();
     }
+
 
 
     @Transactional

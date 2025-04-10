@@ -12,6 +12,7 @@ import com.joinai_support.repository.UserRepository;
 import com.joinai_support.service.SupportTicketService;
 import com.joinai_support.utils.Authenticate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,7 +63,12 @@ public class SupportTicketController {
     @RequestMapping("/getMyStats")
     public ResponseEntity<StatsByAgent> getMyStats(@RequestBody Authenticate authenticationResponse) {
         Optional<Admin> admin = Optional.ofNullable(adminRepository.findByEmail(authenticationResponse.getToken()));
-        return supportTicketService.getStatsByAgent(admin.get());
+        if (admin.isPresent()) {
+            return supportTicketService.getStatsByAgent(admin.get());
+
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
     }
 
 

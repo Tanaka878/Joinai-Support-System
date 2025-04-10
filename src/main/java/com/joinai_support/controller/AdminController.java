@@ -42,10 +42,6 @@ public class AdminController {
 
     @PostMapping("/authenticate/")
     public ResponseEntity<ResponseDTO> authenticate(@RequestBody AdminLoginRequest authenticationRequest) {
-        /*System.out.println("Authentication");
-        AuthenticationResponse response = authenticationService.authenticate(authenticationRequest);
-        String token = response.getToken();*/
-
         ResponseDTO response = new ResponseDTO();
         Optional<Admin> user = Optional.ofNullable(adminService.getAdmin(authenticationRequest.getEmail()));
         user.ifPresent(adminService::TrackActivity);
@@ -70,9 +66,9 @@ public class AdminController {
         return adminService.editProfile(request);
     }
 
+
     @PostMapping("/deleteProfile")
     public ResponseEntity<Admin> deleteAgentProfile(@RequestBody GetResponse request) {
         return adminService.deleteProfile(request);
-
     }
 }

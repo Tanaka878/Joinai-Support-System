@@ -3,10 +3,10 @@ package com.joinai_support.service;
 import com.joinai_support.domain.Admin;
 import com.joinai_support.domain.SupportTicket;
 import com.joinai_support.dto.*;
+import com.joinai_support.repository.AdminRepository;
 import com.joinai_support.repository.SupportTicketRepository;
 import com.joinai_support.utils.Authenticate;
 import com.joinai_support.utils.Status;
-import com.joinai_support.utils.UserValidator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,22 +16,20 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class SupportTicketService {
 
     private final SupportTicketRepository supportTicketRepository;
     private final AdminService adminService;
-    private final UserValidator userValidator;
+    private final AdminRepository adminRepository;
 
 
     @Autowired
-    public SupportTicketService(SupportTicketRepository supportTicketRepository, AdminService adminService, UserValidator userValidator1) {
+    public SupportTicketService(SupportTicketRepository supportTicketRepository, AdminService adminService, AdminRepository adminRepository) {
         this.supportTicketRepository = supportTicketRepository;
         this.adminService = adminService;
-        this.userValidator = userValidator1;
-
+        this.adminRepository = adminRepository;
     }
 
     public String launchTicket(SupportTicket supportTicket) {
@@ -72,7 +70,8 @@ public class SupportTicketService {
     }
 
     public ResponseEntity<List<SupportTicket>> getMyTickets(Authenticate authenticationResponse) {
-       List<SupportTicket> tickets = userValidator.getUser(authenticationResponse.getToken()).getTickets();
+      // List<SupportTicket> tickets = userValidator.getUser(authenticationResponse.getToken()).getTickets();
+        List<SupportTicket> tickets= adminRepository.findByEmail(authenticationResponse.getToken()).getTickets();
        return ResponseEntity.ok(tickets);
     }
 

@@ -7,4 +7,5 @@ import lombok.Data;
 public class GetResponse {
     private String token;
     private Admin admin;
+
 }

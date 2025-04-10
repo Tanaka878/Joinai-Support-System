@@ -5,10 +5,8 @@ import com.joinai_support.domain.SupportTicket;
 import com.joinai_support.dto.*;
 import com.joinai_support.repository.SupportTicketRepository;
 import com.joinai_support.service.AdminService;
-import com.joinai_support.service.AuthenticationService;
 
-import com.joinai_support.springSecurity.config.JWTService;
-import com.joinai_support.springSecurity.config.JwtAuthenticationFilter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,16 +20,14 @@ import java.util.Optional;
 public class AdminController {
 
     private final AdminService adminService;
-    private final AuthenticationService authenticationService;
+
     private final SupportTicketRepository supportTicketRepository;
-    private final JWTService jwtService;
 
     @Autowired
-    public AdminController(AdminService adminService, AuthenticationService authenticationService, SupportTicketRepository supportTicketRepository, JwtAuthenticationFilter jwtAuthenticationFilter, JWTService jwtService) {
+    public AdminController(AdminService adminService,  SupportTicketRepository supportTicketRepository) {
         this.adminService = adminService;
-        this.authenticationService = authenticationService;
+
         this.supportTicketRepository = supportTicketRepository;
-        this.jwtService = jwtService;
     }
 
     @PostMapping("/createAdmin")

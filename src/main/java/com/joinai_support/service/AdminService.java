@@ -6,7 +6,6 @@ import com.joinai_support.repository.AdminRepository;
 import com.joinai_support.domain.Admin;
 import com.joinai_support.dto.UserDTO;
 import com.joinai_support.repository.UserRepository;
-import com.joinai_support.springSecurity.config.JWTService;
 import com.joinai_support.utils.Role;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +26,12 @@ public class AdminService {
     private final AdminRepository adminRepository;
     private final UserRepository userRepository;
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    private final JWTService jwtService;
+
 
     @Autowired
-    public AdminService(AdminRepository adminRepository, JWTService jwtService, UserRepository userRepository) {
+    public AdminService(AdminRepository adminRepository,  UserRepository userRepository) {
         this.adminRepository = adminRepository;
-        this.jwtService = jwtService;
+
         this.userRepository = userRepository;
     }
 
@@ -69,9 +68,9 @@ public class AdminService {
     }
 
     public ResponseEntity<List<Admin>> getAllAgents(GetResponse request) {
-        Optional<User> user = userRepository.findByEmail(jwtService.extractUserName(request.getToken()));
+        Optional<User> user = userRepository.findByEmail(request.getToken());
 
-        if (user.isPresent() && jwtService.validateToken(request.getToken(), user.get())) {
+        if (user.isPresent()) {
             List<Admin> allAdmins = adminRepository.findAll();
             return ResponseEntity.ok(allAdmins.stream().filter(admin -> admin.getRole() == Role.AGENT).toList());
         } else {
@@ -81,9 +80,9 @@ public class AdminService {
 
     @Transactional
     public ResponseEntity<Admin> editProfile(GetResponse request) {
-        Optional<User> user = userRepository.findByEmail(jwtService.extractUserName(request.getToken()));
+        Optional<User> user = userRepository.findByEmail(request.getToken());
 
-        if (user.isPresent() && jwtService.validateToken(request.getToken(), user.get())) {
+        if (user.isPresent()) {
             Admin admin = adminRepository.findByEmail(request.getAdmin().getEmail());
             admin.setFirstName(request.getAdmin().getFirstName());
             admin.setRole(request.getAdmin().getRole());
@@ -97,9 +96,9 @@ public class AdminService {
     @Transactional
     public ResponseEntity<Admin> deleteProfile(GetResponse request) {
 
-        Optional<User> user = userRepository.findByEmail(jwtService.extractUserName(request.getToken()));
+        Optional<User> user = userRepository.findByEmail(request.getToken());
 
-        if (user.isPresent() && jwtService.validateToken(request.getToken(), user.get())) {
+        if (user.isPresent()) {
             Admin admin = adminRepository.findByEmail(request.getAdmin().getEmail());
             adminRepository.delete(admin);
         return ResponseEntity.ok(admin);
@@ -109,7 +108,7 @@ public class AdminService {
 
     @Transactional
     public void TrackActivity(Admin agent) {
-       Admin user = adminRepository.findByEmail(jwtService.extractUserName(agent.getEmail()));
+       Admin user = adminRepository.findByEmail(agent.getEmail());
        if (user != null) {
            user.setLastLogin(LocalDateTime.now());
        }

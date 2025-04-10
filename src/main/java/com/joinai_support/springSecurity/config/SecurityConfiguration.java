@@ -29,7 +29,8 @@ public class SecurityConfiguration {
                                 "/admin/**",            // Matches all endpoints under /admin/
                                 "/admin/getAll",        // Specifically match /admin/getAll
                                 "/ticket/updateTicket",
-                                "/joinai/**"
+                                "/joinai/**",
+                                "/admin/authenticate/"
 
                         ).permitAll() // Permit these endpoints without authentication
                         .anyRequest().authenticated() // Require authentication for all other endpoints

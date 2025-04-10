@@ -11,8 +11,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -25,7 +23,6 @@ public class AdminService {
 
     private final AdminRepository adminRepository;
     private final UserRepository userRepository;
-    PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
     @Autowired
@@ -39,7 +36,7 @@ public class AdminService {
     public ResponseEntity<String> createAgent(UserDTO admin) {
         Admin agent = new Admin();
         agent.setEmail(admin.getEmail());
-        agent.setPassword(passwordEncoder.encode(admin.getPassword()));
+        agent.setPassword(admin.getPassword());
         agent.setFirstName(admin.getFirstName());
         agent.setRole(Role.AGENT);
         adminRepository.save(agent);
@@ -51,7 +48,7 @@ public class AdminService {
     public ResponseEntity<String> createAdmin(UserDTO admin) {
         Admin admin1 = new Admin();
         admin1.setEmail(admin.getEmail());
-        admin1.setPassword(passwordEncoder.encode(admin.getPassword()));
+        admin1.setPassword(admin.getPassword());
         admin1.setFirstName(admin.getFirstName());
         admin1.setRole(Role.ADMIN);
         adminRepository.save(admin1);

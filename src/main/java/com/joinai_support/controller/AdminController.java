@@ -2,10 +2,7 @@ package com.joinai_support.controller;
 
 import com.joinai_support.domain.Admin;
 import com.joinai_support.domain.SupportTicket;
-import com.joinai_support.dto.AdminLoginRequest;
-import com.joinai_support.dto.AuthenticationResponse;
-import com.joinai_support.dto.GetResponse;
-import com.joinai_support.dto.UserDTO;
+import com.joinai_support.dto.*;
 import com.joinai_support.repository.SupportTicketRepository;
 import com.joinai_support.service.AdminService;
 import com.joinai_support.service.AuthenticationService;
@@ -48,11 +45,13 @@ public class AdminController {
     }
 
     @PostMapping("/authenticate/")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AdminLoginRequest authenticationRequest) {
-        System.out.println("Authentication");
+    public ResponseEntity<ResponseDTO> authenticate(@RequestBody AdminLoginRequest authenticationRequest) {
+        /*System.out.println("Authentication");
         AuthenticationResponse response = authenticationService.authenticate(authenticationRequest);
-        String token = response.getToken();
-        Optional<Admin> user = Optional.ofNullable(adminService.getAdmin(jwtService.extractUserName(token)));
+        String token = response.getToken();*/
+
+        ResponseDTO response = new ResponseDTO();
+        Optional<Admin> user = Optional.ofNullable(adminService.getAdmin(authenticationRequest.getEmail()));
         user.ifPresent(adminService::TrackActivity);
         user.ifPresent(admin -> response.setRole(admin.getRole()));
         user.ifPresent(admin -> response.setId(user.get().getId()));

@@ -6,6 +6,7 @@ import com.joinai_support.repository.AdminRepository;
 import com.joinai_support.domain.Admin;
 import com.joinai_support.dto.UserDTO;
 import com.joinai_support.repository.UserRepository;
+import com.joinai_support.utils.AdminDTO;
 import com.joinai_support.utils.Role;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,19 +77,50 @@ public class AdminService {
     }
 
     @Transactional
-    public ResponseEntity<Admin> editProfile(GetResponse request) {
-        Optional<User> user = userRepository.findByEmail(request.getToken());
+    public ResponseEntity<Admin> editProfile(AdminDTO request) {
+        Optional<User> user = userRepository.findByEmail(request.getEmail());
 
         if (user.isPresent()) {
-            Admin admin = adminRepository.findByEmail(request.getAdmin().getEmail());
-            admin.setFirstName(request.getAdmin().getFirstName());
-            admin.setRole(request.getAdmin().getRole());
-            admin.setPassword(request.getAdmin().getPassword());
-            adminRepository.save(admin);
-            return ResponseEntity.ok(admin);
+            Admin admin = adminRepository.findByEmail(request.getEmail());
 
-        }else {return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();}
+            // Check if each field is not empty before setting
+            if (request.getName() != null && !request.getName().isEmpty()) {
+                admin.setFirstName(request.getName());
+            }
+
+            if (request.getPassword() != null && !request.getPassword().isEmpty()) {
+                admin.setPassword(request.getPassword());
+            }
+
+            if (request.getCity() != null && !request.getCity().isEmpty()) {
+                admin.setCity(request.getCity());
+            }
+
+            if (request.getCountry() != null && !request.getCountry().isEmpty()) {
+                admin.setCountry(request.getCountry());
+            }
+
+            if (request.getPhone() != null && !request.getPhone().isEmpty()) {
+                admin.setPhone(request.getPhone());
+            }
+
+            if (request.getAddress() != null && !request.getAddress().isEmpty()) {
+                admin.setAddress(request.getAddress());
+            }
+
+            if (request.getZip() != null && !request.getZip().isEmpty()) {
+                admin.setZip(request.getZip());
+            }
+
+            // Save the updated admin profile
+            adminRepository.save(admin);
+
+            return ResponseEntity.ok(admin);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
+
 
     @Transactional
     public ResponseEntity<Admin> deleteProfile(GetResponse request) {

@@ -7,6 +7,7 @@ import com.joinai_support.repository.SupportTicketRepository;
 import com.joinai_support.service.AdminService;
 
 
+import com.joinai_support.utils.AdminDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -61,8 +62,8 @@ public class AdminController {
        return ResponseEntity.ok(users);
     }
 
-    @PostMapping("/editProfile")
-    public ResponseEntity<Admin> editProfile(@RequestBody GetResponse request) {
+    @PostMapping("/updateProfile")
+    public ResponseEntity<Admin> editProfile(@RequestBody AdminDTO request) {
         return adminService.editProfile(request);
     }
 

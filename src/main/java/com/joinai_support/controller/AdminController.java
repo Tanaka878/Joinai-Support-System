@@ -45,10 +45,16 @@ public class AdminController {
     public ResponseEntity<ResponseDTO> authenticate(@RequestBody AdminLoginRequest authenticationRequest) {
         ResponseDTO response = new ResponseDTO();
         Optional<Admin> user = Optional.ofNullable(adminService.getAdmin(authenticationRequest.getEmail()));
-        user.ifPresent(adminService::TrackActivity);
-        user.ifPresent(admin -> response.setRole(admin.getRole()));
-        user.ifPresent(admin -> response.setId(user.get().getId()));
-        return ResponseEntity.ok(response);
+        if (user.get().getPassword().equals(authenticationRequest.getPassword())) {
+            user.ifPresent(adminService::TrackActivity);
+            user.ifPresent(admin -> response.setRole(admin.getRole()));
+            user.ifPresent(admin -> response.setId(user.get().getId()));
+            return ResponseEntity.ok(response);
+
+        }else {
+            return ResponseEntity.ok(response);
+        }
+
     }
 
     @PostMapping("/getAgents")

@@ -7,6 +7,7 @@ import com.joinai_support.repository.AdminRepository;
 import com.joinai_support.repository.SupportTicketRepository;
 import com.joinai_support.utils.Authenticate;
 import com.joinai_support.utils.Status;
+import com.joinai_support.utils.TicketDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -157,6 +158,28 @@ public class SupportTicketService {
                 .count());
 
         return ResponseEntity.ok(statsByAgent);
+    }
+
+    public ResponseEntity<List<TicketDTO>> getNotifications(String email) {
+        List<TicketDTO> notifications = List.of();
+        TicketDTO ticketDTO = new TicketDTO();
+
+        List<SupportTicket> tickets= adminRepository.findByEmail(email).getTickets();
+        tickets.stream().forEach(supportTicket -> {
+            ticketDTO.setId(supportTicket.getId());
+            ticketDTO.setStatus(supportTicket.getStatus());
+            ticketDTO.setLaunchTimestamp(supportTicket.getLaunchTimestamp());
+            ticketDTO.setCategory(supportTicket.getCategory());
+            ticketDTO.setPriority(supportTicket.getPriority());
+            ticketDTO.setAttachments(supportTicket.getAttachments());
+            ticketDTO.setSubject(supportTicket.getSubject());
+
+            notifications.add(ticketDTO);
+        } );
+
+        return ResponseEntity.ok(notifications);
+
+
     }
 //stats for admins
 

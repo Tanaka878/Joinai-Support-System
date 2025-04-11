@@ -3,14 +3,12 @@ package com.joinai_support.controller;
 import com.joinai_support.domain.Admin;
 import com.joinai_support.domain.SupportTicket;
 import com.joinai_support.domain.User;
-import com.joinai_support.dto.AuthenticationResponse;
-import com.joinai_support.dto.StatisticsDTO;
-import com.joinai_support.dto.StatsByAgent;
-import com.joinai_support.dto.TicketStatusDTO;
+import com.joinai_support.dto.*;
 import com.joinai_support.repository.AdminRepository;
 import com.joinai_support.repository.UserRepository;
 import com.joinai_support.service.SupportTicketService;
 import com.joinai_support.utils.Authenticate;
+import com.joinai_support.utils.TicketDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,6 +66,12 @@ public class SupportTicketController {
 
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+    }
+
+    @RequestMapping("/ticketNotifications")
+    public ResponseEntity<List<TicketDTO>> getTicketNotifications(@RequestBody AdminLoginRequest authenticationResponse) {
+        return supportTicketService.getNotifications(authenticationResponse.getEmail());
 
     }
 

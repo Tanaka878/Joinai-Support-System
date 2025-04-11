@@ -9,6 +9,7 @@ import com.joinai_support.service.AdminService;
 
 import com.joinai_support.utils.AdminDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,18 +45,25 @@ public class AdminController {
     @PostMapping("/authenticate/")
     public ResponseEntity<ResponseDTO> authenticate(@RequestBody AdminLoginRequest authenticationRequest) {
         ResponseDTO response = new ResponseDTO();
-        Optional<Admin> user = Optional.ofNullable(adminService.getAdmin(authenticationRequest.getEmail()));
-        if (user.get().getPassword().equals(authenticationRequest.getPassword())) {
-            user.ifPresent(adminService::TrackActivity);
-            user.ifPresent(admin -> response.setRole(admin.getRole()));
-            user.ifPresent(admin -> response.setId(user.get().getId()));
-            return ResponseEntity.ok(response);
 
-        }else {
-            return ResponseEntity.ok(response);
+        // Fetch admin by email
+        Admin user = adminService.getAdmin(authenticationRequest.getEmail());
+        if (user == null) {
+            // Return unauthorized if user is not found
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();}
+
+        // Validate password (assuming plain text, consider using hashing)
+        if (!user.getPassword().equals(authenticationRequest.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
+        adminService.TrackActivity(user);
+        response.setRole(user.getRole());
+        response.setId(user.getId());
+
+        return ResponseEntity.ok(response);
     }
+
 
     @PostMapping("/getAgents")
     public ResponseEntity<List<Admin>> getAgents(@RequestBody GetResponse request) {

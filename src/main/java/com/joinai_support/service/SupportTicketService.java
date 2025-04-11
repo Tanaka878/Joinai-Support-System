@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -159,13 +160,12 @@ public class SupportTicketService {
 
         return ResponseEntity.ok(statsByAgent);
     }
-
     public ResponseEntity<List<TicketDTO>> getNotifications(String email) {
-        List<TicketDTO> notifications = List.of();
-        TicketDTO ticketDTO = new TicketDTO();
+        List<TicketDTO> notifications = new ArrayList<>(); // Use a mutable list
+        List<SupportTicket> tickets = adminRepository.findByEmail(email).getTickets();
 
-        List<SupportTicket> tickets= adminRepository.findByEmail(email).getTickets();
-        tickets.stream().forEach(supportTicket -> {
+        tickets.forEach(supportTicket -> {
+            TicketDTO ticketDTO = new TicketDTO(); // Create a new instance for each ticket
             ticketDTO.setId(supportTicket.getId());
             ticketDTO.setStatus(supportTicket.getStatus());
             ticketDTO.setLaunchTimestamp(supportTicket.getLaunchTimestamp());
@@ -174,13 +174,12 @@ public class SupportTicketService {
             ticketDTO.setAttachments(supportTicket.getAttachments());
             ticketDTO.setSubject(supportTicket.getSubject());
 
-            notifications.add(ticketDTO);
-        } );
+            notifications.add(ticketDTO); // Add the DTO to the mutable list
+        });
 
         return ResponseEntity.ok(notifications);
-
-
     }
+
 //stats for admins
 
 }

@@ -86,4 +86,14 @@ public class AdminController {
     public ResponseEntity<Admin> deleteAgentProfile(@RequestBody GetResponse request) {
         return adminService.deleteProfile(request);
     }
+
+    @GetMapping("/getAllTickets")
+    public ResponseEntity<List<SupportTicket>> getAllTickets(@RequestBody EmailRequest request) {
+        Admin admin = adminService.getAdmin(request.getEmail());
+        if (admin == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        else return adminService.getAllTickets();
+
+    }
 }

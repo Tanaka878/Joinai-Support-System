@@ -1,10 +1,12 @@
 package com.joinai_support.service;
 
+import com.joinai_support.domain.SupportTicket;
 import com.joinai_support.domain.User;
 import com.joinai_support.dto.GetResponse;
 import com.joinai_support.repository.AdminRepository;
 import com.joinai_support.domain.Admin;
 import com.joinai_support.dto.UserDTO;
+import com.joinai_support.repository.SupportTicketRepository;
 import com.joinai_support.repository.UserRepository;
 import com.joinai_support.utils.AdminDTO;
 import com.joinai_support.utils.Role;
@@ -24,13 +26,15 @@ public class AdminService {
 
     private final AdminRepository adminRepository;
     private final UserRepository userRepository;
+    private final SupportTicketRepository supportTicketRepository;
 
 
     @Autowired
-    public AdminService(AdminRepository adminRepository,  UserRepository userRepository) {
+    public AdminService(AdminRepository adminRepository, UserRepository userRepository, SupportTicketRepository supportTicketRepository) {
         this.adminRepository = adminRepository;
 
         this.userRepository = userRepository;
+        this.supportTicketRepository = supportTicketRepository;
     }
 
     @Transactional
@@ -142,5 +146,9 @@ public class AdminService {
            user.setLastLogin(LocalDateTime.now());
        }
 
+    }
+
+    public ResponseEntity<List<SupportTicket>> getAllTickets() {
+        return ResponseEntity.ok(supportTicketRepository.findAll());
     }
 }

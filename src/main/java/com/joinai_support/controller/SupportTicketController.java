@@ -70,8 +70,8 @@ public class SupportTicketController {
     }
 
     @RequestMapping("/ticketNotifications")
-    public ResponseEntity<List<TicketDTO>> getTicketNotifications(@RequestBody AdminLoginRequest authenticationResponse) {
-        return supportTicketService.getNotifications(authenticationResponse.getEmail());
+    public ResponseEntity<List<TicketDTO>> getTicketNotifications(@RequestBody EmailRequest emailRequest) {
+        return supportTicketService.getNotifications(emailRequest.getEmail());
 
     }
 

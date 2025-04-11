@@ -87,7 +87,7 @@ public class AdminController {
         return adminService.deleteProfile(request);
     }
 
-    @GetMapping("/getAllTickets")
+    @PostMapping("/getAllTickets")
     public ResponseEntity<List<SupportTicket>> getAllTickets(@RequestBody EmailRequest request) {
         Admin admin = adminService.getAdmin(request.getEmail());
         if (admin == null) {

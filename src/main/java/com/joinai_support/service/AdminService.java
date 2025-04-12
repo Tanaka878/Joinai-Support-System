@@ -181,11 +181,12 @@ public class AdminService {
 
 
 
-        PerformanceDTO performance = new PerformanceDTO();
+
 
         List<PerformanceDTO> list = new ArrayList<>();
 
         adminRepository.findAllByRole(Role.AGENT).forEach(admin -> {
+            PerformanceDTO performance = new PerformanceDTO();
             performance.setFrc(34.2);
             performance.setOpenTickets(admin.getTickets()
                     .parallelStream().filter(adminTicket -> adminTicket.getStatus() == Status.OPEN).count());

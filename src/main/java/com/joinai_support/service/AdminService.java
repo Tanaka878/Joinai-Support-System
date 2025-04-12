@@ -2,15 +2,13 @@ package com.joinai_support.service;
 
 import com.joinai_support.domain.SupportTicket;
 import com.joinai_support.domain.User;
-import com.joinai_support.dto.GetResponse;
-import com.joinai_support.dto.PerformanceDTO;
-import com.joinai_support.dto.SystemAnalytics;
+import com.joinai_support.dto.*;
 import com.joinai_support.repository.AdminRepository;
 import com.joinai_support.domain.Admin;
-import com.joinai_support.dto.UserDTO;
 import com.joinai_support.repository.SupportTicketRepository;
 import com.joinai_support.repository.UserRepository;
 import com.joinai_support.utils.AdminDTO;
+import com.joinai_support.utils.Priority;
 import com.joinai_support.utils.Role;
 import com.joinai_support.utils.Status;
 import jakarta.transaction.Transactional;
@@ -202,6 +200,29 @@ public class AdminService {
         systemAnalytics.setOpenTickets(openTickets);
         systemAnalytics.setDailyTickets(dailytickets);
         systemAnalytics.setPerformance(list);
+
+        List<Ticket> ticklist = new ArrayList<>();
+
+
+        allAdmins.parallelStream().filter(admin -> admin.getRole() == Role.AGENT).forEach(admin -> {
+            Ticket ticket = new Ticket();
+            ticket.setName(admin.getFirstName());
+            admin.getTickets().parallelStream().forEach(adminTicket -> {
+                if (adminTicket.getPriority() == Priority.HIGH) {
+                    ticket.setHigh(ticket.getHigh() + 1);
+                } else if (adminTicket.getPriority() == Priority.LOW) {
+                    ticket.setLow(ticket.getLow() + 1);
+                }else if (adminTicket.getPriority() == Priority.NORMAL) {
+                    ticket.setNormal(ticket.getNormal() + 1);
+                } else if (adminTicket.getPriority() == Priority.URGENT) {
+                    ticket.setUrgent(ticket.getUrgent() + 1);
+                }
+
+
+            });
+            ticklist.add(ticket);
+        });
+        systemAnalytics.setTickets(ticklist);
 
         
         return ResponseEntity.ok(systemAnalytics);

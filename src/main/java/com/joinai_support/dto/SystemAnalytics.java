@@ -11,6 +11,7 @@ public class SystemAnalytics {
     private long totalAgents;
     private long dailyTickets;
     private List<PerformanceDTO> performance;
+    List<Ticket> tickets;
 
 
 

@@ -26,6 +26,7 @@ public class SupportTicket {
     private LocalDateTime launchTimestamp;
     private LocalDateTime servedTimestamp;
     private String subject;
+    @Enumerated(EnumType.STRING)
     private Priority priority;
 
     private String content;

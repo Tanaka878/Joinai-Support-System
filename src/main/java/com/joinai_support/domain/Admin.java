@@ -16,6 +16,7 @@ public class Admin extends User {
     private Long id;
 
     private String phone;
+    private String name;
     private String address;
     private String city;
     private String state;

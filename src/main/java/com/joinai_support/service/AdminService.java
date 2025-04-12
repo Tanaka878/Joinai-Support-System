@@ -3,6 +3,7 @@ package com.joinai_support.service;
 import com.joinai_support.domain.SupportTicket;
 import com.joinai_support.domain.User;
 import com.joinai_support.dto.GetResponse;
+import com.joinai_support.dto.PerformanceDTO;
 import com.joinai_support.dto.SystemAnalytics;
 import com.joinai_support.repository.AdminRepository;
 import com.joinai_support.domain.Admin;
@@ -176,10 +177,23 @@ public class AdminService {
                         supportTicket.getLaunchTimestamp().isAfter(dailyStart) ||
                                 supportTicket.getLaunchTimestamp().isEqual(dailyStart))
                 .count());
+
+
+
+        PerformanceDTO performance = new PerformanceDTO();
+
+        adminRepository.findAllByRole(Role.AGENT).forEach(admin -> {
+            performance.setFrc(34.2);
+            performance.setOpenTickets(admin.getTickets()
+                    .parallelStream().filter(adminTicket -> adminTicket.getStatus() == Status.OPEN).count());
+
+        });
+
         SystemAnalytics systemAnalytics = new SystemAnalytics();
         systemAnalytics.setTotalAgents(agents);
         systemAnalytics.setOpenTickets(openTickets);
         systemAnalytics.setDailyTickets(dailytickets);
+
         
         return ResponseEntity.ok(systemAnalytics);
     }

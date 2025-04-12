@@ -62,7 +62,7 @@ public class SupportTicket {
 
 
         if (status == null) {
-            status = Status.NEW;
+            status = Status.OPEN;
         }
     }
 }

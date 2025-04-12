@@ -186,6 +186,8 @@ public class AdminService {
             performance.setFrc(34.2);
             performance.setOpenTickets(admin.getTickets()
                     .parallelStream().filter(adminTicket -> adminTicket.getStatus() == Status.OPEN).count());
+            performance.setOldTickets(admin.getTickets().parallelStream()
+                    .filter(adminTicket ->adminTicket.getStatus() ==Status.OPEN && adminTicket.getLaunchTimestamp().isAfter(dailyStart)).count());
 
         });
 

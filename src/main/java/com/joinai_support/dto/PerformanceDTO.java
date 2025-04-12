@@ -9,7 +9,7 @@ public class PerformanceDTO {
     //for agent related stats
     String agentName;
     long openTickets;
-    List<OldTicketDTO> oldTickets;
+    long oldTickets;
     double frc;
 
 }

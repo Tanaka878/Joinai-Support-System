@@ -11,5 +11,8 @@ public class PerformanceDTO {
     long openTickets;
     long oldTickets;
     double frc;
+    long solvedPastWeek =45;
+    long solvedPastMonth =33;
+    String photo="/Images/pro pic.jpg";
 
 }

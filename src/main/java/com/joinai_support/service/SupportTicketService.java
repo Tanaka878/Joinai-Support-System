@@ -34,10 +34,12 @@ public class SupportTicketService {
         this.adminRepository = adminRepository;
     }
 
+    @Transactional
     public String launchTicket(SupportTicket supportTicket) {
         // Fetch all available admins
         ResponseEntity<List<Admin>> agentsResponse = adminService.getAll();
         List<Admin> agentList = agentsResponse.getBody();
+
 
         // Check if admins are available
         if (agentList == null || agentList.isEmpty()) {
@@ -57,7 +59,7 @@ public class SupportTicketService {
         // Assign the ticket to the selected admin
         supportTicket.setAssignedTo(selectedAdmin);
         supportTicket.setLaunchTimestamp(LocalDateTime.now());
-        supportTicket.setStatus(Status.NEW); // Ensure the ticket starts with a default status
+        supportTicket.setStatus(Status.OPEN); // Ensure the ticket starts with a default status
 
         try {
             supportTicketRepository.save(supportTicket);

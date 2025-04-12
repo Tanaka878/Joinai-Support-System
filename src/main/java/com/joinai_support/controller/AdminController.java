@@ -96,4 +96,9 @@ public class AdminController {
         else return adminService.getAllTickets();
 
     }
+
+    @PostMapping("/getAnalytics")
+    public ResponseEntity<SystemAnalytics>  getAnalytics(@RequestBody GetResponse request) {
+        return adminService.systemAnalytics();
+    }
 }

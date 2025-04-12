@@ -3,6 +3,7 @@ package com.joinai_support.service;
 import com.joinai_support.domain.SupportTicket;
 import com.joinai_support.domain.User;
 import com.joinai_support.dto.GetResponse;
+import com.joinai_support.dto.SystemAnalytics;
 import com.joinai_support.repository.AdminRepository;
 import com.joinai_support.domain.Admin;
 import com.joinai_support.dto.UserDTO;
@@ -10,6 +11,7 @@ import com.joinai_support.repository.SupportTicketRepository;
 import com.joinai_support.repository.UserRepository;
 import com.joinai_support.utils.AdminDTO;
 import com.joinai_support.utils.Role;
+import com.joinai_support.utils.Status;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -150,5 +152,35 @@ public class AdminService {
 
     public ResponseEntity<List<SupportTicket>> getAllTickets() {
         return ResponseEntity.ok(supportTicketRepository.findAll());
+    }
+    
+    public ResponseEntity<SystemAnalytics> systemAnalytics() {
+        // total  agents
+        List<Admin> allAdmins = adminRepository.findAll();
+        long agents = allAdmins.stream().filter(admin -> admin.getRole() == Role.AGENT).toList().size();
+        
+        //open tickets
+        long openTickets=supportTicketRepository.findAll().parallelStream()
+                .filter(supportTicket -> supportTicket.getStatus() == Status.OPEN).count();
+        
+        //daily tickets  
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime localDateTime =LocalDateTime.now();
+        List<SupportTicket> tickets = supportTicketRepository.findAll();
+
+        // Daily stats (last 24 hours)
+        LocalDateTime dailyStart = now.minusHours(24);
+        long dailytickets = (tickets.stream()
+                .filter(supportTicket ->
+                        supportTicket.getLaunchTimestamp().isAfter(dailyStart) ||
+                                supportTicket.getLaunchTimestamp().isEqual(dailyStart))
+                .count());
+        SystemAnalytics systemAnalytics = new SystemAnalytics();
+        systemAnalytics.setTotalAgents(agents);
+        systemAnalytics.setOpenTickets(openTickets);
+        systemAnalytics.setDailyTickets(dailytickets);
+        
+        return ResponseEntity.ok(systemAnalytics);
     }
 }

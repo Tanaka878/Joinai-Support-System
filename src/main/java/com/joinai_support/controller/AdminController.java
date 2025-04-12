@@ -98,7 +98,7 @@ public class AdminController {
     }
 
     @PostMapping("/getAnalytics")
-    public ResponseEntity<SystemAnalytics>  getAnalytics(@RequestBody GetResponse request) {
+    public ResponseEntity<SystemAnalytics>  getAnalytics() {
         return adminService.systemAnalytics();
     }
 }

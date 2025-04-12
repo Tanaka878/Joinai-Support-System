@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -182,12 +183,15 @@ public class AdminService {
 
         PerformanceDTO performance = new PerformanceDTO();
 
+        List<PerformanceDTO> list = new ArrayList<>();
+
         adminRepository.findAllByRole(Role.AGENT).forEach(admin -> {
             performance.setFrc(34.2);
             performance.setOpenTickets(admin.getTickets()
                     .parallelStream().filter(adminTicket -> adminTicket.getStatus() == Status.OPEN).count());
             performance.setOldTickets(admin.getTickets().parallelStream()
                     .filter(adminTicket ->adminTicket.getStatus() ==Status.OPEN && adminTicket.getLaunchTimestamp().isAfter(dailyStart)).count());
+            list.add(performance);
 
         });
 
@@ -195,6 +199,7 @@ public class AdminService {
         systemAnalytics.setTotalAgents(agents);
         systemAnalytics.setOpenTickets(openTickets);
         systemAnalytics.setDailyTickets(dailytickets);
+        systemAnalytics.setPerformance(list);
 
         
         return ResponseEntity.ok(systemAnalytics);

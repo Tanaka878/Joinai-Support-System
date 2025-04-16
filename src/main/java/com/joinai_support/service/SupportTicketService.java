@@ -6,6 +6,7 @@ import com.joinai_support.dto.*;
 import com.joinai_support.repository.AdminRepository;
 import com.joinai_support.repository.SupportTicketRepository;
 import com.joinai_support.utils.Authenticate;
+import com.joinai_support.utils.Priority;
 import com.joinai_support.utils.Status;
 import com.joinai_support.utils.TicketDTO;
 import jakarta.transaction.Transactional;
@@ -14,10 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class SupportTicketService {
@@ -40,8 +38,6 @@ public class SupportTicketService {
         ResponseEntity<List<Admin>> agentsResponse = adminService.getAll();
         List<Admin> agentList = agentsResponse.getBody();
 
-
-        // Check if admins are available
         if (agentList == null || agentList.isEmpty()) {
             return "No admins available to assign the ticket.";
         }
@@ -59,7 +55,12 @@ public class SupportTicketService {
         // Assign the ticket to the selected admin
         supportTicket.setAssignedTo(selectedAdmin);
         supportTicket.setLaunchTimestamp(LocalDateTime.now());
-        supportTicket.setStatus(Status.OPEN); // Ensure the ticket starts with a default status
+
+        Priority[] priorities = Priority.values();
+
+        int randomIndex = new Random().nextInt(priorities.length);
+        supportTicket.setPriority(priorities[randomIndex]);
+        supportTicket.setStatus(Status.OPEN);
 
         try {
             supportTicketRepository.save(supportTicket);

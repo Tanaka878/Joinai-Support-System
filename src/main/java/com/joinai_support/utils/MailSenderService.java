@@ -85,12 +85,12 @@ public class MailSenderService {
      * @param ticket The support ticket that was closed
      */
     public void sendTicketClosedNotification(SupportTicket ticket) {
-        if (ticket.getIssuerEmail() == null || ticket.getIssuerEmail().isEmpty()) {
-            logger.warn("Cannot send ticket closed notification: issuer email is missing for ticket ID: {}", ticket.getId());
+        if (ticket.getSubject() == null || ticket.getSubject().isEmpty()) {
+            logger.warn("Cannot send ticket closed notification: subject (which contains issuer info) is missing for ticket ID: {}", ticket.getId());
             return;
         }
 
-        String subject = "Your Support Ticket Has Been Closed - #" + ticket.getId();
+        String emailSubject = "Your Support Ticket Has Been Closed - #" + ticket.getId();
         String text = "Hello,\n\n" +
                 "Your support ticket has been closed:\n\n" +
                 "Ticket ID: " + ticket.getId() + "\n" +
@@ -103,7 +103,7 @@ public class MailSenderService {
                 "Thank you for using our support services.\n\n" +
                 "Best Regards,\nThe JoinAI Support Team";
 
-        sendEmail(ticket.getIssuerEmail(), subject, text);
+        sendEmail(ticket.getSubject(), emailSubject, text);
     }
 
     /**

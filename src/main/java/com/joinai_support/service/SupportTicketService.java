@@ -73,9 +73,9 @@ public class SupportTicketService {
         supportTicket.setPriority(priorities[randomIndex]);
         supportTicket.setStatus(Status.OPEN);
 
-        // Ensure issuerEmail is set if not already provided
-        if (supportTicket.getIssuerEmail() == null || supportTicket.getIssuerEmail().isEmpty()) {
-            logger.warn("Ticket created without issuer email. Notifications to issuer will not be possible.");
+        // Ensure subject is set if not already provided (subject contains issuer info)
+        if (supportTicket.getSubject() == null || supportTicket.getSubject().isEmpty()) {
+            logger.warn("Ticket created without subject (which contains issuer info). Notifications to issuer will not be possible.");
         }
 
         try {
@@ -134,10 +134,10 @@ public class SupportTicketService {
             if (ticket.getStatus() == Status.CLOSED) {
                 try {
                     mailSenderService.sendTicketClosedNotification(ticket);
-                    logger.info("Ticket closed notification sent to issuer: {}", ticket.getIssuerEmail());
+                    logger.info("Ticket closed notification sent to issuer: {}", ticket.getSubject());
                 } catch (Exception e) {
                     // Log the exception but don't fail the ticket update
-                    logger.error("Failed to send ticket closed notification to issuer: {}", ticket.getIssuerEmail(), e);
+                    logger.error("Failed to send ticket closed notification to issuer: {}", ticket.getSubject(), e);
                 }
             }
 
@@ -233,7 +233,8 @@ public class SupportTicketService {
             ticketDTO.setPriority(supportTicket.getPriority());
             ticketDTO.setAttachments(supportTicket.getAttachments());
             ticketDTO.setSubject(supportTicket.getSubject());
-            ticketDTO.setIssuerEmail(supportTicket.getIssuerEmail());
+            // Subject field contains the issuer information, so we use it for issuerEmail as well
+            ticketDTO.setIssuerEmail(supportTicket.getSubject());
 
             notifications.add(ticketDTO); // Add the DTO to the mutable list
         });

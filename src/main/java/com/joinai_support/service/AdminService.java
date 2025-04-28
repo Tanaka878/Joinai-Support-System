@@ -8,6 +8,7 @@ import com.joinai_support.domain.Admin;
 import com.joinai_support.repository.SupportTicketRepository;
 import com.joinai_support.repository.UserRepository;
 import com.joinai_support.utils.AdminDTO;
+import com.joinai_support.utils.MailSenderService;
 import com.joinai_support.utils.Priority;
 import com.joinai_support.utils.Role;
 import com.joinai_support.utils.Status;
@@ -16,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,41 +28,76 @@ import java.util.Optional;
 
 @Service
 public class AdminService {
+    private static final Logger logger = LoggerFactory.getLogger(AdminService.class);
 
     private final AdminRepository adminRepository;
     private final UserRepository userRepository;
     private final SupportTicketRepository supportTicketRepository;
+    private final MailSenderService mailSenderService;
 
 
     @Autowired
-    public AdminService(AdminRepository adminRepository, UserRepository userRepository, SupportTicketRepository supportTicketRepository) {
+    public AdminService(AdminRepository adminRepository, 
+                       UserRepository userRepository, 
+                       SupportTicketRepository supportTicketRepository,
+                       MailSenderService mailSenderService) {
         this.adminRepository = adminRepository;
-
         this.userRepository = userRepository;
         this.supportTicketRepository = supportTicketRepository;
+        this.mailSenderService = mailSenderService;
     }
 
     @Transactional
     public ResponseEntity<String> createAgent(UserDTO admin) {
-        Admin agent = new Admin();
-        agent.setEmail(admin.getEmail());
-        agent.setPassword(admin.getPassword());
-        agent.setFirstName(admin.getFirstName());
-        agent.setRole(Role.AGENT);
-        adminRepository.save(agent);
-        return ResponseEntity.ok("Agent created");
+        try {
+            Admin agent = new Admin();
+            agent.setEmail(admin.getEmail());
+            agent.setPassword(admin.getPassword());
+            agent.setFirstName(admin.getFirstName());
+            agent.setRole(Role.AGENT);
+            adminRepository.save(agent);
+
+            // Send welcome email to the new agent
+            try {
+                mailSenderService.sendWelcomeEmail(agent.getEmail(), agent.getFirstName(), admin.getPassword());
+                logger.info("Welcome email sent to new agent: {}", agent.getEmail());
+            } catch (Exception e) {
+                // Log the exception but don't fail the agent creation
+                logger.error("Failed to send welcome email to new agent: {}", agent.getEmail(), e);
+            }
+
+            return ResponseEntity.ok("Agent created successfully");
+        } catch (Exception e) {
+            logger.error("Failed to create agent", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create agent: " + e.getMessage());
+        }
     }
 
 
     @Transactional
     public ResponseEntity<String> createAdmin(UserDTO admin) {
-        Admin admin1 = new Admin();
-        admin1.setEmail(admin.getEmail());
-        admin1.setPassword(admin.getPassword());
-        admin1.setFirstName(admin.getFirstName());
-        admin1.setRole(Role.ADMIN);
-        adminRepository.save(admin1);
-         return ResponseEntity.ok("Admin created");
+        try {
+            Admin admin1 = new Admin();
+            admin1.setEmail(admin.getEmail());
+            admin1.setPassword(admin.getPassword());
+            admin1.setFirstName(admin.getFirstName());
+            admin1.setRole(Role.ADMIN);
+            adminRepository.save(admin1);
+
+            // Send welcome email to the new admin
+            try {
+                mailSenderService.sendWelcomeEmail(admin1.getEmail(), admin1.getFirstName(), admin.getPassword());
+                logger.info("Welcome email sent to new admin: {}", admin1.getEmail());
+            } catch (Exception e) {
+                // Log the exception but don't fail the admin creation
+                logger.error("Failed to send welcome email to new admin: {}", admin1.getEmail(), e);
+            }
+
+            return ResponseEntity.ok("Admin created successfully");
+        } catch (Exception e) {
+            logger.error("Failed to create admin", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create admin: " + e.getMessage());
+        }
     }
 
     public ResponseEntity<List<Admin>> getAll() {
@@ -153,16 +191,16 @@ public class AdminService {
     public ResponseEntity<List<SupportTicket>> getAllTickets() {
         return ResponseEntity.ok(supportTicketRepository.findAll());
     }
-    
+
     public ResponseEntity<SystemAnalytics> systemAnalytics() {
         // total  agents
         List<Admin> allAdmins = adminRepository.findAll();
         long agents = allAdmins.stream().filter(admin -> admin.getRole() == Role.AGENT).toList().size();
-        
+
         //open tickets
         long openTickets=supportTicketRepository.findAll().parallelStream()
                 .filter(supportTicket -> supportTicket.getStatus() == Status.OPEN).count();
-        
+
         //daily tickets  
 
         LocalDateTime now = LocalDateTime.now();
@@ -224,7 +262,7 @@ public class AdminService {
         });
         systemAnalytics.setTickets(ticklist);
 
-        
+
         return ResponseEntity.ok(systemAnalytics);
     }
 }

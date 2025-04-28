@@ -49,6 +49,8 @@ public class SupportTicket {
     @JsonBackReference
     private Admin assignedTo;
 
+    private String issuerEmail;
+
     @PrePersist
     public void prePersist() {
         if (launchTimestamp == null) {

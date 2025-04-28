@@ -6,6 +6,7 @@ import com.joinai_support.dto.*;
 import com.joinai_support.repository.AdminRepository;
 import com.joinai_support.repository.SupportTicketRepository;
 import com.joinai_support.utils.Authenticate;
+import com.joinai_support.utils.MailSenderService;
 import com.joinai_support.utils.Priority;
 import com.joinai_support.utils.Status;
 import com.joinai_support.utils.TicketDTO;
@@ -16,20 +17,28 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class SupportTicketService {
+    private static final Logger logger = LoggerFactory.getLogger(SupportTicketService.class);
 
     private final SupportTicketRepository supportTicketRepository;
     private final AdminService adminService;
     private final AdminRepository adminRepository;
+    private final MailSenderService mailSenderService;
 
 
     @Autowired
-    public SupportTicketService(SupportTicketRepository supportTicketRepository, AdminService adminService, AdminRepository adminRepository) {
+    public SupportTicketService(SupportTicketRepository supportTicketRepository, 
+                               AdminService adminService, 
+                               AdminRepository adminRepository,
+                               MailSenderService mailSenderService) {
         this.supportTicketRepository = supportTicketRepository;
         this.adminService = adminService;
         this.adminRepository = adminRepository;
+        this.mailSenderService = mailSenderService;
     }
 
     @Transactional
@@ -39,6 +48,7 @@ public class SupportTicketService {
         List<Admin> agentList = agentsResponse.getBody();
 
         if (agentList == null || agentList.isEmpty()) {
+            logger.warn("No admins available to assign the ticket");
             return "No admins available to assign the ticket.";
         }
 
@@ -49,6 +59,7 @@ public class SupportTicketService {
                 .orElse(null);
 
         if (selectedAdmin == null) {
+            logger.warn("Failed to find a suitable admin for ticket assignment");
             return "Failed to find a suitable admin for ticket assignment.";
         }
 
@@ -62,11 +73,26 @@ public class SupportTicketService {
         supportTicket.setPriority(priorities[randomIndex]);
         supportTicket.setStatus(Status.OPEN);
 
+        // Ensure issuerEmail is set if not already provided
+        if (supportTicket.getIssuerEmail() == null || supportTicket.getIssuerEmail().isEmpty()) {
+            logger.warn("Ticket created without issuer email. Notifications to issuer will not be possible.");
+        }
+
         try {
             supportTicketRepository.save(supportTicket);
+
+            // Send email notification to the assigned admin
+            try {
+                mailSenderService.sendTicketCreationNotification(supportTicket, selectedAdmin);
+                logger.info("Ticket creation notification sent to admin: {}", selectedAdmin.getEmail());
+            } catch (Exception e) {
+                // Log the exception but don't fail the ticket creation
+                logger.error("Failed to send ticket creation notification to admin: {}", selectedAdmin.getEmail(), e);
+            }
+
         } catch (Exception e) {
             // Log the exception and return a failure message
-            e.printStackTrace();
+            logger.error("Failed to save the support ticket", e);
             return "Failed to save the support ticket. Please try again.";
         }
 
@@ -79,15 +105,46 @@ public class SupportTicketService {
     public ResponseEntity<String> updateTicket(TicketStatusDTO supportTicket) {
         Optional<SupportTicket> supportTicketEntity = supportTicketRepository.findById(supportTicket.getTicketId());
         if (supportTicketEntity.isPresent()) {
-            supportTicketEntity.get().setStatus(supportTicket.getStatus());
-            Duration between = Duration.between(supportTicketEntity.get().getLaunchTimestamp(), LocalDateTime.now());
-            supportTicketEntity.get().setTimeLimit(between);
-            supportTicketEntity.get().setServedTimestamp(LocalDateTime.now());
-            supportTicketRepository.save(supportTicketEntity.get());
+            SupportTicket ticket = supportTicketEntity.get();
+
+            // Update ticket status
+            ticket.setStatus(supportTicket.getStatus());
+            Duration between = Duration.between(ticket.getLaunchTimestamp(), LocalDateTime.now());
+            ticket.setTimeLimit(between);
+            ticket.setServedTimestamp(LocalDateTime.now());
+
+            // Save the updated ticket
+            supportTicketRepository.save(ticket);
+
+            // Send email notification to the assigned admin
+            Admin assignedAdmin = ticket.getAssignedTo();
+            if (assignedAdmin != null) {
+                try {
+                    mailSenderService.sendTicketUpdateNotification(ticket, assignedAdmin);
+                    logger.info("Ticket update notification sent to admin: {}", assignedAdmin.getEmail());
+                } catch (Exception e) {
+                    // Log the exception but don't fail the ticket update
+                    logger.error("Failed to send ticket update notification to admin: {}", assignedAdmin.getEmail(), e);
+                }
+            } else {
+                logger.warn("No admin assigned to ticket ID: {}, cannot send notification", ticket.getId());
+            }
+
+            // Send notification to ticket issuer if the ticket is being closed
+            if (ticket.getStatus() == Status.CLOSED) {
+                try {
+                    mailSenderService.sendTicketClosedNotification(ticket);
+                    logger.info("Ticket closed notification sent to issuer: {}", ticket.getIssuerEmail());
+                } catch (Exception e) {
+                    // Log the exception but don't fail the ticket update
+                    logger.error("Failed to send ticket closed notification to issuer: {}", ticket.getIssuerEmail(), e);
+                }
+            }
 
             return ResponseEntity.ok("Ticket successfully updated.");
         }
         else {
+            logger.warn("Ticket not found with ID: {}", supportTicket.getTicketId());
             return ResponseEntity.notFound().build();
         }
     }
@@ -176,6 +233,7 @@ public class SupportTicketService {
             ticketDTO.setPriority(supportTicket.getPriority());
             ticketDTO.setAttachments(supportTicket.getAttachments());
             ticketDTO.setSubject(supportTicket.getSubject());
+            ticketDTO.setIssuerEmail(supportTicket.getIssuerEmail());
 
             notifications.add(ticketDTO); // Add the DTO to the mutable list
         });

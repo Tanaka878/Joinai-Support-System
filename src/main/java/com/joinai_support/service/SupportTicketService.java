@@ -90,6 +90,15 @@ public class SupportTicketService {
                 logger.error("Failed to send ticket creation notification to admin: {}", selectedAdmin.getEmail(), e);
             }
 
+            // Send email notification to the customer who opened the ticket
+            try {
+                mailSenderService.sendTicketOpenedNotification(supportTicket);
+                logger.info("Ticket creation notification sent to customer: {}", supportTicket.getSubject());
+            } catch (Exception e) {
+                // Log the exception but don't fail the ticket creation
+                logger.error("Failed to send ticket creation notification to customer: {}", supportTicket.getSubject(), e);
+            }
+
         } catch (Exception e) {
             // Log the exception and return a failure message
             logger.error("Failed to save the support ticket", e);

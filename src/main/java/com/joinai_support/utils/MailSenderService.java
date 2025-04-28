@@ -107,6 +107,32 @@ public class MailSenderService {
     }
 
     /**
+     * Sends a notification to the ticket issuer when they open a new ticket
+     * @param ticket The support ticket that was created
+     */
+    public void sendTicketOpenedNotification(SupportTicket ticket) {
+        if (ticket.getSubject() == null || ticket.getSubject().isEmpty()) {
+            logger.warn("Cannot send ticket opened notification: subject (which contains issuer info) is missing for ticket ID: {}", ticket.getId());
+            return;
+        }
+
+        String emailSubject = "Your Support Ticket Has Been Created - #" + ticket.getId();
+        String text = "Hello,\n\n" +
+                "Thank you for contacting JoinAI Support. Your support ticket has been created successfully:\n\n" +
+                "Ticket ID: " + ticket.getId() + "\n" +
+                "Subject: " + ticket.getSubject() + "\n" +
+                "Status: " + ticket.getStatus() + "\n" +
+                "Priority: " + ticket.getPriority() + "\n" +
+                "Created At: " + ticket.getLaunchTimestamp() + "\n\n" +
+                "Our support team has been notified and will review your ticket as soon as possible. " +
+                "You will receive updates on the status of your ticket via email.\n\n" +
+                "Thank you for your patience.\n\n" +
+                "Best Regards,\nThe JoinAI Support Team";
+
+        sendEmail(ticket.getSubject(), emailSubject, text);
+    }
+
+    /**
      * Sends a password reset email with OTP
      * @param otp One-time password for resetting the password
      * @param email Email address of the recipient

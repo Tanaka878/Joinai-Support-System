@@ -117,6 +117,7 @@ public class MailSenderService {
             return;
         }
 
+        System.out.println("*****SENDING TICKET TO " + ticket.getSubject() + "*****");
         String emailSubject = "Your Support Ticket Has Been Created - #" + ticket.getId();
         String text = "Hello,\n\n" +
                 "Thank you for contacting JoinAI Support. Your support ticket has been created successfully:\n\n" +

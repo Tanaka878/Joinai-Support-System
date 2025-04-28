@@ -9,6 +9,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.regex.Pattern;
 
 @Service
 public class MailSenderService {
@@ -149,12 +150,33 @@ public class MailSenderService {
     }
 
     /**
+     * Validates if the provided string is a valid email address
+     * @param email The email address to validate
+     * @return true if the email is valid, false otherwise
+     */
+    private boolean isValidEmail(String email) {
+        if (email == null || email.isEmpty()) {
+            return false;
+        }
+        // RFC 5322 compliant email regex pattern
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        return pattern.matcher(email).matches();
+    }
+
+    /**
      * Helper method to send emails
      * @param to Email address of the recipient
      * @param subject Subject of the email
      * @param text Body of the email
      */
     private void sendEmail(String to, String subject, String text) {
+        // Validate email address before sending
+        if (!isValidEmail(to)) {
+            logger.error("Invalid email address: {}, email not sent", to);
+            return; // Skip sending email to invalid addresses
+        }
+
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(to);

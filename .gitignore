@@ -1,6 +1,6 @@
 # Application properties
 application.properties
-HELP.md
+ReadMe.md
 
 # Maven and Target Directory
 target/

@@ -94,7 +94,6 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         else return adminService.getAllTickets();
-
     }
 
     @PostMapping("/getAnalytics")

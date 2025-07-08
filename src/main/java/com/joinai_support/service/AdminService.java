@@ -76,6 +76,12 @@ public class AdminService {
 
     @Transactional
     public ResponseEntity<String> createAdmin(UserDTO admin) {
+
+        Optional<Admin> optionalAdmin = Optional.ofNullable(adminRepository.findByEmail(admin.getEmail()));
+        if (optionalAdmin.isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Admin already exists");
+        }
+
         try {
             Admin admin1 = new Admin();
             admin1.setEmail(admin.getEmail());

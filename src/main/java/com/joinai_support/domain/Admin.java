@@ -2,6 +2,7 @@ package com.joinai_support.domain;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import com.joinai_support.utils.Gender;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -23,6 +24,9 @@ public class Admin extends User {
     private String zip;
     private String country;
     private LocalDateTime lastLogin;
+    private String firstName;
+    private String username;
+    private Gender gender;
 
     @OneToMany(mappedBy = "assignedTo", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference

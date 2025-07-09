@@ -25,16 +25,9 @@ public class User  {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String firstName;
-    private String username;
     private String password;
     private String email;
     private Role role;
-    private Gender gender;
-    private LocalDate localDate = LocalDate.now();
-
-    @ElementCollection
-    private List<Long> groupIds = new ArrayList<>();
-
+    private LocalDate createdAt = LocalDate.now();
 
 }

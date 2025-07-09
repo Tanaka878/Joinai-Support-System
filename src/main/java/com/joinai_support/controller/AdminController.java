@@ -81,6 +81,11 @@ public class AdminController {
         return adminService.editProfile(request);
     }
 
+    @GetMapping("/getProfileData")
+    public ResponseEntity<AdminDTO> getProfileData(@RequestBody EmailRequest profileRequest) {
+        return adminService.getProfileData(profileRequest);
+    }
+
 
     @PostMapping("/deleteProfile")
     public ResponseEntity<Admin> deleteAgentProfile(@RequestBody GetResponse request) {

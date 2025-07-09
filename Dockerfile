@@ -10,7 +10,7 @@ WORKDIR /app
 COPY target/TestAI-0.0.1-SNAPSHOT.jar app.jar
 
 # Expose the port your Spring Boot app runs on
-EXPOSE 8090
+EXPOSE 8082
 
 # Set environment variables
 ENV SPRING_PROFILES_ACTIVE=default

@@ -271,4 +271,21 @@ public class AdminService {
 
         return ResponseEntity.ok(systemAnalytics);
     }
+
+    public ResponseEntity<AdminDTO> getProfileData(EmailRequest profileRequest) {
+        AdminDTO adminDTO = new AdminDTO();
+
+        Admin optionalAdmin = adminRepository.findByEmail(profileRequest.getEmail());
+        if (optionalAdmin != null) {
+            adminDTO.setName(optionalAdmin.getFirstName());
+            adminDTO.setEmail(optionalAdmin.getEmail());
+            adminDTO.setPassword(optionalAdmin.getPassword());
+            adminDTO.setAddress(optionalAdmin.getAddress());
+            adminDTO.setCountry(optionalAdmin.getCountry());
+            adminDTO.setCity(optionalAdmin.getCity());
+            adminDTO.setState(optionalAdmin.getState());
+        }
+
+        return ResponseEntity.ok(adminDTO);
+    }
 }

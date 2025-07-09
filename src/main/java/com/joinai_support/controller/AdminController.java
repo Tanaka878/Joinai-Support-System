@@ -81,7 +81,7 @@ public class AdminController {
         return adminService.editProfile(request);
     }
 
-    @GetMapping("/getProfileData")
+    @PostMapping("/getProfileData")
     public ResponseEntity<AdminDTO> getProfileData(@RequestBody EmailRequest profileRequest) {
         return adminService.getProfileData(profileRequest);
     }

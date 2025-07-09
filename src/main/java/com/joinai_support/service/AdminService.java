@@ -261,8 +261,6 @@ public class AdminService {
                 } else if (adminTicket.getPriority() == Priority.URGENT) {
                     ticket.setUrgent(ticket.getUrgent() + 1);
                 }
-
-
             });
             ticklist.add(ticket);
         });

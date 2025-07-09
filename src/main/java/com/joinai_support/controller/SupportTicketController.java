@@ -2,7 +2,6 @@ package com.joinai_support.controller;
 
 import com.joinai_support.domain.Admin;
 import com.joinai_support.domain.SupportTicket;
-import com.joinai_support.domain.User;
 import com.joinai_support.dto.*;
 import com.joinai_support.repository.AdminRepository;
 import com.joinai_support.repository.UserRepository;
@@ -54,8 +53,6 @@ public class SupportTicketController {
     public ResponseEntity<StatisticsDTO> getStats(@RequestBody AuthenticationResponse authenticationResponse) {
 
             return supportTicketService.getStatistics();
-
-
     }
 
     @RequestMapping("/getMyStats")

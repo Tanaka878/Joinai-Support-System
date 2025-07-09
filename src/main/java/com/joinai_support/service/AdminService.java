@@ -282,6 +282,8 @@ public class AdminService {
             adminDTO.setCountry(optionalAdmin.getCountry());
             adminDTO.setCity(optionalAdmin.getCity());
             adminDTO.setState(optionalAdmin.getState());
+            adminDTO.setPhone(optionalAdmin.getPhone());
+            adminDTO.setZip(optionalAdmin.getZip());
         }
 
         return ResponseEntity.ok(adminDTO);

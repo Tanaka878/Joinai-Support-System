@@ -83,9 +83,13 @@ public class MailSenderService {
 
     /**
      * Sends a notification to the ticket issuer when their ticket is closed
+     *
      * @param ticket The support ticket that was closed
+     * @param reply
      */
-    public void sendTicketClosedNotification(SupportTicket ticket) {
+
+    //TODO WORK ON THE REPLY TO THE EMAIL
+    public void sendTicketClosedNotification(SupportTicket ticket, String reply) {
         if (ticket.getSubject() == null || ticket.getSubject().isEmpty()) {
             logger.warn("Cannot send ticket closed notification: subject (which contains issuer info) is missing for ticket ID: {}", ticket.getId());
             return;

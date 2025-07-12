@@ -142,7 +142,7 @@ public class SupportTicketService {
             // Send notification to ticket issuer if the ticket is being closed
             if (ticket.getStatus() == Status.CLOSED) {
                 try {
-                    mailSenderService.sendTicketClosedNotification(ticket);
+                    mailSenderService.sendTicketClosedNotification(ticket, supportTicket.getReply());
                     logger.info("Ticket closed notification sent to issuer: {}", ticket.getSubject());
                 } catch (Exception e) {
                     // Log the exception but don't fail the ticket update

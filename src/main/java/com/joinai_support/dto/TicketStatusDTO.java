@@ -8,4 +8,5 @@ public class TicketStatusDTO {
     private Long ticketId;
     private Status status;
     private String token;
+    private String reply;
 }

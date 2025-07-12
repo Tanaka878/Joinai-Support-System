@@ -104,7 +104,7 @@ public class MailSenderService {
                 "Thank you for using our support services.\n\n" +
                 "Best Regards,\nThe JoinAI Support Team";
 
-        sendEmail(ticket.getSubject(), emailSubject, text);
+        sendEmail(ticket.getIssuerEmail(), emailSubject, text);
     }
 
     /**
@@ -117,7 +117,7 @@ public class MailSenderService {
             return;
         }
 
-        System.out.println("*****SENDING TICKET TO " + ticket.getSubject() + "*****");
+        System.out.println("*****SENDING TICKET TO " + ticket.getIssuerEmail() + "*****");
         String emailSubject = "Your Support Ticket Has Been Created - #" + ticket.getId();
         String text = "Hello,\n\n" +
                 "Thank you for contacting JoinAI Support. Your support ticket has been created successfully:\n\n" +
@@ -131,7 +131,7 @@ public class MailSenderService {
                 "Thank you for your patience.\n\n" +
                 "Best Regards,\nThe JoinAI Support Team";
 
-        sendEmail(ticket.getSubject(), emailSubject, text);
+        sendEmail(ticket.getIssuerEmail(), emailSubject, text);
     }
 
     /**

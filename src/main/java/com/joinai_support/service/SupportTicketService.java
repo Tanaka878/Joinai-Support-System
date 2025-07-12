@@ -230,11 +230,11 @@ public class SupportTicketService {
         return ResponseEntity.ok(statsByAgent);
     }
     public ResponseEntity<List<TicketDTO>> getNotifications(String email) {
-        List<TicketDTO> notifications = new ArrayList<>(); // Use a mutable list
+        List<TicketDTO> notifications = new ArrayList<>();
         List<SupportTicket> tickets = adminRepository.findByEmail(email).getTickets();
 
         tickets.forEach(supportTicket -> {
-            TicketDTO ticketDTO = new TicketDTO(); // Create a new instance for each ticket
+            TicketDTO ticketDTO = new TicketDTO();
             ticketDTO.setId(supportTicket.getId());
             ticketDTO.setStatus(supportTicket.getStatus());
             ticketDTO.setLaunchTimestamp(supportTicket.getLaunchTimestamp());
@@ -242,15 +242,11 @@ public class SupportTicketService {
             ticketDTO.setPriority(supportTicket.getPriority());
             ticketDTO.setAttachments(supportTicket.getAttachments());
             ticketDTO.setSubject(supportTicket.getSubject());
-            // Subject field contains the issuer information, so we use it for issuerEmail as well
-            ticketDTO.setIssuerEmail(supportTicket.getSubject());
+            ticketDTO.setIssuerEmail(supportTicket.getIssuerEmail());
 
-            notifications.add(ticketDTO); // Add the DTO to the mutable list
+            notifications.add(ticketDTO);
         });
 
         return ResponseEntity.ok(notifications);
     }
-
-//stats for admins
-
 }

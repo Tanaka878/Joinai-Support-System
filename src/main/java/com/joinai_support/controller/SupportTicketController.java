@@ -37,6 +37,17 @@ public class SupportTicketController {
         return supportTicketService.launchTicket(supportTicket);
     }
 
+    @PostMapping("/openTicket")
+    public String openTicket(@RequestBody SupportTicketRequest supportTicket) {
+        SupportTicket ticket = new SupportTicket();
+
+        ticket.setIssuerEmail(supportTicket.getEmail());
+        ticket.setSubject(supportTicket.getSubject());
+        ticket.setContent(supportTicket.getContent());
+
+        return supportTicketService.launchTicket(ticket);
+    }
+
     @RequestMapping("/updateTicket")
     public ResponseEntity<String> updateTicket(@RequestBody TicketStatusDTO supportTicket) {
 

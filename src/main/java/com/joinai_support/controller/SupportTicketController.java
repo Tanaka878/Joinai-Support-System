@@ -40,18 +40,14 @@ public class SupportTicketController {
     @PostMapping("/openTicket")
     public String openTicket(@RequestBody SupportTicketRequest supportTicket) {
         SupportTicket ticket = new SupportTicket();
-
         ticket.setIssuerEmail(supportTicket.getEmail());
         ticket.setSubject(supportTicket.getSubject());
         ticket.setContent(supportTicket.getContent());
-
         return supportTicketService.launchTicket(ticket);
     }
 
     @RequestMapping("/updateTicket")
     public ResponseEntity<String> updateTicket(@RequestBody TicketStatusDTO supportTicket) {
-
-        System.out.println(" The user Id"+ supportTicket.getTicketId());
         return supportTicketService.updateTicket(supportTicket);
     }
 
@@ -62,7 +58,6 @@ public class SupportTicketController {
 
     @RequestMapping("/getStats")
     public ResponseEntity<StatisticsDTO> getStats(@RequestBody AuthenticationResponse authenticationResponse) {
-
             return supportTicketService.getStatistics();
     }
 
@@ -71,7 +66,6 @@ public class SupportTicketController {
         Optional<Admin> admin = Optional.ofNullable(adminRepository.findByEmail(authenticationResponse.getToken()));
         if (admin.isPresent()) {
             return supportTicketService.getStatsByAgent(admin.get());
-
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
@@ -80,7 +74,6 @@ public class SupportTicketController {
     @RequestMapping("/ticketNotifications")
     public ResponseEntity<List<TicketDTO>> getTicketNotifications(@RequestBody EmailRequest emailRequest) {
         return supportTicketService.getNotifications(emailRequest.getEmail());
-
     }
 
 

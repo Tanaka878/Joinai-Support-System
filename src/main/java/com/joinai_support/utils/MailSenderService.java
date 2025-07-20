@@ -71,9 +71,8 @@ public class MailSenderService {
         String text = "Hello " + admin.getFirstName() + ",\n\n" +
                 "A support ticket assigned to you has been updated:\n\n" +
                 "Ticket ID: " + ticket.getId() + "\n" +
-                "Subject: " + ticket.getSubject() + "\n" +
+                "Subject: " + ticket.getContent() + "\n" +
                 "Status: " + ticket.getStatus() + "\n" +
-                "Priority: " + ticket.getPriority() + "\n" +
                 "Last Updated: " + ticket.getServedTimestamp() + "\n\n" +
                 "Please log in to the support platform to view the details.\n\n" +
                 "Best Regards,\nThe JoinAI Support Team";
@@ -126,9 +125,8 @@ public class MailSenderService {
         String text = "Hello,\n\n" +
                 "Thank you for contacting JoinAI Support. Your support ticket has been created successfully:\n\n" +
                 "Ticket ID: " + ticket.getId() + "\n" +
-                "Subject: " + ticket.getSubject() + "\n" +
+                "Issue: " + ticket.getContent() + "\n" +
                 "Status: " + ticket.getStatus() + "\n" +
-                "Priority: " + ticket.getPriority() + "\n" +
                 "Created At: " + ticket.getLaunchTimestamp() + "\n\n" +
                 "Our support team has been notified and will review your ticket as soon as possible. " +
                 "You will receive updates on the status of your ticket via email.\n\n" +

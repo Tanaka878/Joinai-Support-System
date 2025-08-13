@@ -9,6 +9,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.regex.Pattern;
 
 @Service
@@ -90,50 +93,133 @@ public class MailSenderService {
     //TODO WORK ON THE REPLY TO THE EMAIL
     public void sendTicketClosedNotification(SupportTicket ticket, String reply) {
         if (ticket.getSubject() == null || ticket.getSubject().isEmpty()) {
-            logger.warn("Cannot send ticket closed notification: subject (which contains issuer info) is missing for ticket ID: {}", ticket.getId());
+            logger.warn("Cannot send ticket closed notification: subject (which contains issuer info) is missing for ticket ID: {}",
+                    ticket.getId());
             return;
         }
 
-        String emailSubject = "Your Support Ticket Has Been Closed - #" + ticket.getId();
-        String text = "Hello,\n\n" +
-                "Your support ticket has been closed:\n\n" +
-                "Ticket ID: " + ticket.getId() + "\n" +
-                "Subject: " + ticket.getSubject() + "\n" +
-                "Status: " + ticket.getStatus() + "\n" +
-                "Priority: " + ticket.getPriority() + "\n" +
-                "Closed At: " + ticket.getServedTimestamp() + "\n\n" +
-                "If you have any further questions or if you believe this ticket was closed in error, " +
-                "please feel free to create a new support ticket or reply to this email.\n\n" +
-                "Thank you for using our support services.\n\n" +
-                "Best Regards,\nThe JoinAI Support Team";
+        logger.info("Sending ticket closure notification to: {}", ticket.getIssuerEmail());
 
-        sendEmail(ticket.getIssuerEmail(), emailSubject, text);
+        String emailSubject = "Support Ticket Resolved - Reference #" + ticket.getId();
+
+        String emailBody = buildTicketClosureEmailBody(ticket, reply);
+
+        sendEmail(ticket.getIssuerEmail(), emailSubject, emailBody);
     }
 
+    private String buildTicketClosureEmailBody(SupportTicket ticket, String reply) {
+        StringBuilder emailBody = new StringBuilder();
+
+        // Format the closure timestamp
+        String formattedClosureTime = formatTimestamp(ticket.getServedTimestamp());
+
+        emailBody.append("Dear Valued Customer,\n\n")
+                .append("We are pleased to inform you that your support ticket has been successfully resolved.\n\n")
+                .append("TICKET SUMMARY:\n")
+                .append("─────────────────────────────────\n")
+                .append("Ticket Reference: #").append(ticket.getId()).append("\n")
+                .append("Subject: ").append(ticket.getSubject()).append("\n")
+                .append("Final Status: ").append(ticket.getStatus()).append("\n")
+                .append("Priority Level: ").append(ticket.getPriority()).append("\n")
+                .append("Resolution Date: ").append(formattedClosureTime).append("\n\n");
+
+        // Include resolution details if reply is provided
+        if (reply != null && !reply.trim().isEmpty()) {
+            emailBody.append("RESOLUTION DETAILS:\n")
+                    .append("─────────────────────────────────\n")
+                    .append(reply.trim()).append("\n\n");
+        }
+
+        emailBody.append("CUSTOMER SATISFACTION:\n")
+                .append("─────────────────────────────────\n")
+                .append("We hope our solution has addressed your inquiry satisfactorily. Your feedback is important to us ")
+                .append("and helps us improve our services.\n\n")
+                .append("NEED ADDITIONAL ASSISTANCE?\n")
+                .append("─────────────────────────────────\n")
+                .append("• If you have follow-up questions related to this issue, please reply to this email ")
+                .append("with reference #").append(ticket.getId()).append("\n")
+                .append("• For new or unrelated issues, please submit a new support ticket\n")
+                .append("• If you believe this ticket was closed in error, please contact us immediately\n\n")
+                .append("We appreciate your patience throughout the resolution process and thank you for choosing JoinAI. ")
+                .append("Our team remains committed to providing you with exceptional support.\n\n")
+                .append("Thank you for your business.\n\n")
+                .append("Best regards,\n\n")
+                .append("The JoinAI Customer Support Team\n")
+                .append("Your success is our priority");
+
+        return emailBody.toString();
+    }
     /**
      * Sends a notification to the ticket issuer when they open a new ticket
      * @param ticket The support ticket that was created
      */
+
+
     public void sendTicketOpenedNotification(SupportTicket ticket) {
         if (ticket.getSubject() == null || ticket.getSubject().isEmpty()) {
-            logger.warn("Cannot send ticket opened notification: subject (which contains issuer info) is missing for ticket ID: {}", ticket.getId());
+            logger.warn("Cannot send ticket opened notification: subject (which contains issuer info) is missing for ticket ID: {}",
+                    ticket.getId());
             return;
         }
 
-        System.out.println("*****SENDING TICKET TO " + ticket.getIssuerEmail() + "*****");
-        String emailSubject = "Your Support Ticket Has Been Created - #" + ticket.getId();
-        String text = "Hello,\n\n" +
-                "Thank you for contacting JoinAI Support. Your support ticket has been created successfully:\n\n" +
-                "Ticket ID: " + ticket.getId() + "\n" +
-                "Issue: " + ticket.getContent() + "\n" +
-                "Status: " + ticket.getStatus() + "\n" +
-                "Created At: " + ticket.getLaunchTimestamp() + "\n\n" +
-                "Our support team has been notified and will review your ticket as soon as possible. " +
-                "You will receive updates on the status of your ticket via email.\n\n" +
-                "Thank you for your patience.\n\n" +
-                "Best Regards,\nThe JoinAI Support Team";
+        logger.info("Sending ticket creation notification to: {}", ticket.getIssuerEmail());
 
-        sendEmail(ticket.getIssuerEmail(), emailSubject, text);
+        String emailSubject = "Support Ticket Created Successfully - Reference #" + ticket.getId();
+
+        String emailBody = buildTicketCreationEmailBody(ticket);
+
+        sendEmail(ticket.getIssuerEmail(), emailSubject, emailBody);
+    }
+
+    private String buildTicketCreationEmailBody(SupportTicket ticket) {
+        StringBuilder emailBody = new StringBuilder();
+
+        // Format the timestamp to be user-friendly
+        String formattedTimestamp = formatTimestamp(ticket.getLaunchTimestamp());
+
+        emailBody.append("Dear Valued Customer,\n\n")
+                .append("Thank you for contacting JoinAI Support. We have successfully received and processed your support request.\n\n")
+                .append("TICKET DETAILS:\n")
+                .append("─────────────────────────────────\n")
+                .append("Ticket Reference: #").append(ticket.getId()).append("\n")
+                .append("Subject: ").append(ticket.getSubject()).append("\n")
+                .append("Description: ").append(ticket.getContent()).append("\n")
+                .append("Current Status: ").append(ticket.getStatus()).append("\n")
+                .append("Date Created: ").append(formattedTimestamp).append("\n\n")
+                .append("WHAT HAPPENS NEXT:\n")
+                .append("─────────────────────────────────\n")
+                .append("• Our technical support team has been automatically notified\n")
+                .append("• Your ticket will be reviewed and prioritized based on urgency\n")
+                .append("• You will receive email updates as your ticket progresses\n")
+                .append("• Please reference ticket #").append(ticket.getId()).append(" in any future correspondence\n\n")
+                .append("We appreciate your patience as we work to resolve your inquiry promptly. ")
+                .append("Our team is committed to providing you with the highest level of support.\n\n")
+                .append("If you have any additional questions or need to provide supplementary information, ")
+                .append("please reply to this email with your ticket reference number.\n\n")
+                .append("Best regards,\n\n")
+                .append("The JoinAI Customer Support Team\n")
+                .append("Available 24/7 for your assistance");
+
+        return emailBody.toString();
+    }
+
+    private String formatTimestamp(Object timestamp) {
+        try {
+            if (timestamp instanceof LocalDateTime) {
+                LocalDateTime dateTime = (LocalDateTime) timestamp;
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy 'at' h:mm a");
+                return dateTime.format(formatter);
+            } else if (timestamp instanceof String) {
+                LocalDateTime dateTime = LocalDateTime.parse(timestamp.toString());
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy 'at' h:mm a");
+                return dateTime.format(formatter);
+            } else {
+                return timestamp.toString();
+            }
+        } catch (Exception e) {
+            logger.warn("Failed to format timestamp: {}", timestamp, e);
+            return timestamp.toString();
+        }
     }
 
     /**

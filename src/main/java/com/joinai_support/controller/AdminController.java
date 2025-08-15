@@ -64,6 +64,11 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/forget-password")
+    public ResponseEntity<String> forgetPassword(@RequestBody EmailRequest request){
+        return adminService.forgetPassword(request);
+    }
+
 
     @PostMapping("/getAgents")
     public ResponseEntity<List<Admin>> getAgents(@RequestBody GetResponse request) {

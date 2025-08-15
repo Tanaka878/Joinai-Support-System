@@ -230,10 +230,14 @@ public class MailSenderService {
     public void sendPasswordResetEmail(String otp, String email) {
         String subject = "Password Reset Request - JoinAI Support Platform";
         String text = "Hello,\n\n" +
-                "We received a request to reset your password for the JoinAI Support Platform.\n\n" +
-                "Your one-time password (OTP) to reset your password is: " + otp + "\n\n" +
-                "If you did not request a password reset, please ignore this email or contact support.\n\n" +
-                "Best Regards,\nThe JoinAI Support Team";
+                "We received a request to reset your password for your JoinAI Support Platform account.\n\n" +
+                "Your one-time password (OTP) for password reset is: " + otp + "\n\n" +
+                "Please note that this OTP will expire in 15 minutes for security purposes.\n\n" +
+                "If you did not request a password reset, please ignore this email or contact our support team immediately.\n\n" +
+                "For your security, never share this OTP with anyone.\n\n" +
+                "Best regards,\n" +
+                "The JoinAI Support Team\n" +
+                "support@joinai.com";
 
         sendEmail(email, subject, text);
     }

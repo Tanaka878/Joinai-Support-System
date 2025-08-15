@@ -7,11 +7,7 @@ import com.joinai_support.repository.AdminRepository;
 import com.joinai_support.domain.Admin;
 import com.joinai_support.repository.SupportTicketRepository;
 import com.joinai_support.repository.UserRepository;
-import com.joinai_support.utils.AdminDTO;
-import com.joinai_support.utils.MailSenderService;
-import com.joinai_support.utils.Priority;
-import com.joinai_support.utils.Role;
-import com.joinai_support.utils.Status;
+import com.joinai_support.utils.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,6 +30,7 @@ public class AdminService {
     private final UserRepository userRepository;
     private final SupportTicketRepository supportTicketRepository;
     private final MailSenderService mailSenderService;
+    private RandomPasswordGenerator passwordGenerator;
 
 
     @Autowired
@@ -287,5 +284,15 @@ public class AdminService {
         }
 
         return ResponseEntity.ok(adminDTO);
+    }
+
+    public ResponseEntity<String> forgetPassword(EmailRequest request) {
+        String newPassword = RandomPasswordGenerator.generatePassword(6);
+
+        /// sending the password to the receipent
+        mailSenderService.sendPasswordResetEmail(newPassword, request.getEmail());
+        return ResponseEntity.ok("Sucess");
+
+
     }
 }

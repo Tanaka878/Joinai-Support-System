@@ -286,12 +286,24 @@ public class AdminService {
         return ResponseEntity.ok(adminDTO);
     }
 
+    @Transactional
     public ResponseEntity<String> forgetPassword(EmailRequest request) {
-        String newPassword = RandomPasswordGenerator.generatePassword(6);
+        //checking to see if the user exists in the user tables before sending a email
 
-        /// sending the password to the receipent
-        mailSenderService.sendPasswordResetEmail(newPassword, request.getEmail());
-        return ResponseEntity.ok("Sucess");
+        Optional<Admin> userExists = Optional.ofNullable(adminRepository.findByEmail(request.getEmail()));
+        if (userExists.isPresent()){
+            String newPassword = RandomPasswordGenerator.generatePassword(6);
+
+            /// sending the password to the receipent
+            mailSenderService.sendPasswordResetEmail(newPassword, request.getEmail());
+            userExists.get().setPassword(newPassword);
+            adminRepository.save(userExists.get());
+            return ResponseEntity.ok("Sucess");
+
+        }
+
+        return ResponseEntity.notFound().build();
+
 
 
     }

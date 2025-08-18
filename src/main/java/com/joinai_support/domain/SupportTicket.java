@@ -14,6 +14,7 @@ import lombok.Data;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -27,6 +28,7 @@ public class SupportTicket {
     private LocalDateTime servedTimestamp;
     private String subject;
     private Priority priority;
+    List<String> replies;
 
     private String content;
     private String attachments;
@@ -65,5 +67,9 @@ public class SupportTicket {
         if (status == null) {
             status = Status.OPEN;
         }
+    }
+
+    public void addReply(String reply) {
+        this.replies.add(reply);
     }
 }

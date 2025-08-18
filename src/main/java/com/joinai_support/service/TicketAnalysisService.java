@@ -6,6 +6,8 @@ import com.joinai_support.repository.TicketAnalysisRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -39,5 +41,14 @@ public class TicketAnalysisService {
     // Fetch a ticket
     public Optional<TicketAnalysis> getTicket(String ticketId) {
         return repository.findById(ticketId);
+    }
+
+    //method to find replies associated with a ticket
+    public List<String>  associatedReplies(String ticketId){TicketAnalysis ticket = repository.findByTicketId(ticketId);
+        return  ticket != null ? ticket.getReplies() : Collections.emptyList();
+
+
+
+
     }
 }

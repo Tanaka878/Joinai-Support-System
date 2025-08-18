@@ -5,11 +5,7 @@ import com.joinai_support.domain.SupportTicket;
 import com.joinai_support.dto.*;
 import com.joinai_support.repository.AdminRepository;
 import com.joinai_support.repository.SupportTicketRepository;
-import com.joinai_support.utils.Authenticate;
-import com.joinai_support.utils.MailSenderService;
-import com.joinai_support.utils.Priority;
-import com.joinai_support.utils.Status;
-import com.joinai_support.utils.TicketDTO;
+import com.joinai_support.utils.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +41,7 @@ public class SupportTicketService {
 
     @Transactional
     public String launchTicket(SupportTicket supportTicket) {
+        supportTicket.setCategory(Category.SUPPORT);
         // Fetch all available admins
         ResponseEntity<List<Admin>> agentsResponse = adminService.getAll();
         List<Admin> agentList = agentsResponse.getBody();
@@ -114,14 +111,11 @@ public class SupportTicketService {
         return "Ticket successfully opened " ;
     }
 
-
-
     @Transactional
     public ResponseEntity<String> updateTicket(TicketStatusDTO supportTicket) {
         Optional<SupportTicket> supportTicketEntity = supportTicketRepository.findById(supportTicket.getTicketId());
         if (supportTicketEntity.isPresent()) {
             SupportTicket ticket = supportTicketEntity.get();
-
             // Update ticket status
             ticket.setStatus(supportTicket.getStatus());
             Duration between = Duration.between(ticket.getLaunchTimestamp(), LocalDateTime.now());
@@ -257,4 +251,5 @@ public class SupportTicketService {
 
         return ResponseEntity.ok(notifications);
     }
+
 }

@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -294,11 +293,11 @@ public class AdminService {
         if (userExists.isPresent()){
             String newPassword = RandomPasswordGenerator.generatePassword(6);
 
-            /// sending the password to the receipent
+            /// sending the password to the recipient
             mailSenderService.sendPasswordResetEmail(newPassword, request.getEmail());
             userExists.get().setPassword(newPassword);
             adminRepository.save(userExists.get());
-            return ResponseEntity.ok("Sucess");
+            return ResponseEntity.ok("Success");
 
         }
 

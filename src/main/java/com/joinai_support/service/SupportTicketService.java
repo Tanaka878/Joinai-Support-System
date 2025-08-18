@@ -28,17 +28,19 @@ public class SupportTicketService {
     private final AdminService adminService;
     private final AdminRepository adminRepository;
     private final MailSenderService mailSenderService;
+    private final TicketAnalysisService ticketAnalysisService;
 
 
     @Autowired
-    public SupportTicketService(SupportTicketRepository supportTicketRepository, 
-                               AdminService adminService, 
-                               AdminRepository adminRepository,
-                               MailSenderService mailSenderService) {
+    public SupportTicketService(SupportTicketRepository supportTicketRepository,
+                                AdminService adminService,
+                                AdminRepository adminRepository,
+                                MailSenderService mailSenderService, TicketAnalysisService ticketAnalysisService) {
         this.supportTicketRepository = supportTicketRepository;
         this.adminService = adminService;
         this.adminRepository = adminRepository;
         this.mailSenderService = mailSenderService;
+        this.ticketAnalysisService = ticketAnalysisService;
     }
 
     @Transactional
@@ -93,6 +95,7 @@ public class SupportTicketService {
             // Send email notification to the customer who opened the ticket
             try {
                 mailSenderService.sendTicketOpenedNotification(supportTicket);
+
                 logger.info("Ticket creation notification sent to customer: {}", supportTicket.getSubject());
             } catch (Exception e) {
                 // Log the exception but don't fail the ticket creation
@@ -105,7 +108,10 @@ public class SupportTicketService {
             return "Failed to save the support ticket. Please try again.";
         }
 
-        return "Ticket successfully assigned to admin: " + selectedAdmin.getId();
+        //sending the ticket to mongodb for future analysis
+        ticketAnalysisService.createRecord(String.valueOf(supportTicket.getId()), supportTicket.getContent());
+
+        return "Ticket successfully opened " ;
     }
 
 
@@ -140,9 +146,11 @@ public class SupportTicketService {
             }
 
             // Send notification to ticket issuer if the ticket is being closed
+            //
             if (ticket.getStatus() == Status.CLOSED) {
                 try {
                     mailSenderService.sendTicketClosedNotification(ticket, supportTicket.getReply());
+                    ticketAnalysisService.addReply(String.valueOf(supportTicket.getTicketId()), supportTicket.getReply());
                     logger.info("Ticket closed notification sent to issuer: {}", ticket.getSubject());
                 } catch (Exception e) {
                     // Log the exception but don't fail the ticket update

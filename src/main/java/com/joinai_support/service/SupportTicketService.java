@@ -109,7 +109,7 @@ public class SupportTicketService {
         }
 
         //sending the ticket to mongodb for future analysis
-        ticketAnalysisService.createRecord(String.valueOf(supportTicket.getId()), supportTicket.getContent());
+        ticketAnalysisService.createRecord(String.valueOf(supportTicket.getId()), supportTicket.getContent(), supportTicket.getIssuerEmail());
 
         return "Ticket successfully opened " ;
     }

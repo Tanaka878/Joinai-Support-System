@@ -18,8 +18,8 @@ public class TicketAnalysisService {
     }
 
     // Create a new ticket
-    public TicketAnalysis createRecord(String ticketId, String question) {
-        TicketAnalysis ticket = new TicketAnalysis(ticketId, question);
+    public TicketAnalysis createRecord(String ticketId, String question, String issuerEmail) {
+        TicketAnalysis ticket = new TicketAnalysis(ticketId, question,issuerEmail);
         return repository.save(ticket);
     }
 

@@ -1,9 +1,6 @@
 package com.joinai_support.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -17,9 +14,11 @@ public class TicketAnalysis {
     @Id
     private String ticketId;
     private String question;
+    private String issuerEmail;
     private List<String> replies = new ArrayList<>();
 
-    public TicketAnalysis(String ticketId, String question) {
+    public TicketAnalysis(String ticketId, String question, String issuerEmail) {
+        this.issuerEmail= issuerEmail;
         this.ticketId = ticketId;
         this.question = question;
     }

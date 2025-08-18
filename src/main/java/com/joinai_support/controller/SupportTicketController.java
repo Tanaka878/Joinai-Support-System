@@ -51,7 +51,7 @@ public class SupportTicketController {
         return supportTicketService.updateTicket(supportTicket);
     }
 
-    @GetMapping("/getMyTickets")
+    @PostMapping("/getMyTickets")
     public ResponseEntity<List<SupportTicket>> getMyTickets(@RequestBody Authenticate authenticationResponse) {
         return supportTicketService.getMyTickets(authenticationResponse);
     }

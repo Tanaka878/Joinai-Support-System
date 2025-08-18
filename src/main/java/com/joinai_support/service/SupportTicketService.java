@@ -162,7 +162,7 @@ public class SupportTicketService {
 
     public ResponseEntity<List<SupportTicket>> getMyTickets(Authenticate authenticationResponse) {
       // List<SupportTicket> tickets = userValidator.getUser(authenticationResponse.getToken()).getTickets();
-        List<SupportTicket> tickets= adminRepository.findByEmail(authenticationResponse.getToken()).getTickets();
+        List<SupportTicket> tickets= adminRepository.findByEmail(authenticationResponse.getEmail()).getTickets();
        return ResponseEntity.ok(tickets);
     }
 

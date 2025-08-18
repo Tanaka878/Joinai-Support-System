@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class Authenticate {
-    String token;
-    Role role;
+    private String token;
+    private Role role;
+    private String email;
 }

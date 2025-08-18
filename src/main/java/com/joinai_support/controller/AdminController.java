@@ -46,13 +46,10 @@ public class AdminController {
     public ResponseEntity<ResponseDTO> authenticate(@RequestBody AdminLoginRequest authenticationRequest) {
         ResponseDTO response = new ResponseDTO();
 
-        // Fetch admin by email
         Admin user = adminService.getAdmin(authenticationRequest.getEmail());
         if (user == null) {
-            // Return unauthorized if user is not found
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();}
 
-        // Validate password (assuming plain text, consider using hashing)
         if (!user.getPassword().equals(authenticationRequest.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
